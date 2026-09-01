@@ -3,23 +3,31 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::create([
+            'name' => 'Gradely Admin',
+            'email' => 'admin@gradely.test',
+            'password' => 'password',
+            'role' => 'admin',
+        ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        User::create([
+            'name' => 'Gradely Teacher',
+            'email' => 'teacher@gradely.test',
+            'password' => 'password',
+            'role' => 'teacher',
+        ]);
+
+        User::create([
+            'name' => 'Gradely Parent',
+            'email' => 'parent@gradely.test',
+            'password' => 'password',
+            'role' => 'parent',
         ]);
     }
 }
