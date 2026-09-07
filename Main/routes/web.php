@@ -8,8 +8,68 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return match (auth()->user()->role) {
+        'admin' => redirect()->route('admin.dashboard'),
+        'teacher' => redirect()->route('teacher.dashboard'),
+        'parent' => redirect()->route('parent.dashboard'),
+        default => abort(403),
+    };
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified', 'role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| Teacher Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified', 'role:teacher'])
+    ->prefix('teacher')
+    ->name('teacher.')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('teacher.dashboard');
+        })->name('dashboard');
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| Parent Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified', 'role:parent'])
+    ->prefix('parent')
+    ->name('parent.')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('parent.dashboard');
+        })->name('dashboard');
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| Profile Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
