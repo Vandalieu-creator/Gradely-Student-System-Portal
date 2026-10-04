@@ -7,11 +7,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard Route
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/dashboard', function () {
     return match (auth()->user()->role) {
         'admin' => redirect()->route('admin.dashboard'),
         'teacher' => redirect()->route('teacher.dashboard'),
         'parent' => redirect()->route('parent.dashboard'),
+        'student' => redirect()->route('student.dashboard'),
         default => abort(403),
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -51,6 +59,22 @@ Route::middleware(['auth', 'verified', 'role:teacher'])
 
 /*
 |--------------------------------------------------------------------------
+| Student Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified', 'role:student'])
+    ->prefix('student')
+    ->name('student.')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('student.dashboard');
+        })->name('dashboard');
+    });
+
+
+/*
+|--------------------------------------------------------------------------
 | Parent Routes
 |--------------------------------------------------------------------------
 */
@@ -76,5 +100,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 
 require __DIR__.'/auth.php';
