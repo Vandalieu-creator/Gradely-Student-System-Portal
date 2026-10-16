@@ -7,27 +7,20 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Seed the application's database.
+     */
     public function run(): void
     {
-        User::create([
-            'name' => 'Gradely Admin',
-            'email' => 'admin@gradely.test',
-            'password' => 'password',
-            'role' => 'admin',
-        ]);
+        $students = [
+            ['lrn' => '109876543210', 'name' => 'Jm Marvie Brizuela', 'role' => 'student'],
+            ['lrn' => '109876543211', 'name' => 'Eduard Licatan',      'role' => 'student'],
+            ['lrn' => '109876543212', 'name' => 'Clint John Orbillo',  'role' => 'student'],
+            ['lrn' => '109876543213', 'name' => 'Charles Cabrera',     'role' => 'student'],
+        ];
 
-        User::create([
-            'name' => 'Gradely Teacher',
-            'email' => 'teacher@gradely.test',
-            'password' => 'password',
-            'role' => 'teacher',
-        ]);
-
-        User::create([
-            'name' => 'Gradely Parent',
-            'email' => 'parent@gradely.test',
-            'password' => 'password',
-            'role' => 'parent',
-        ]);
+        foreach ($students as $student) {
+            User::create($student);
+        }
     }
 }

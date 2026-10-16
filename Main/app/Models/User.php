@@ -11,22 +11,21 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['name', 'email', 'password', 'role'])]
+#[Fillable(['name', 'username', 'email', 'lrn', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    public function teacher(): HasOne
+    {
+        return $this->hasOne(Teacher::class);
+    }
 
-public function teacher(): HasOne
-{
-    return $this->hasOne(Teacher::class);
-}
-     
-/**
- * @return array<string, string>
- */
+    /**
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
