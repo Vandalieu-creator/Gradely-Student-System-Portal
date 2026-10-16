@@ -67,9 +67,9 @@ Route::middleware(['auth', 'verified', 'role:student'])
     ->prefix('student')
     ->name('student.')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('student.dashboard');
-        })->name('dashboard');
+        Route::get('/student/dashboard', function () {
+             return view('student.dashboard');
+         })->middleware(['auth'])->name('student.dashboard');
     });
 
 
@@ -101,5 +101,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Student Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified', 'role:student'])
+    ->prefix('student')
+    ->name('student.')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('student.dashboard');
+        })->name('dashboard');
+
+        Route::get('/grades', function () {
+            return view('student.grades');
+        })->name('grades');
+    });
 
 require __DIR__.'/auth.php';

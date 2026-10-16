@@ -35,6 +35,7 @@
 
     <div class="w-full max-w-7xl bg-cardBg rounded-[3rem] shadow-2xl flex flex-col lg:flex-row overflow-hidden border border-white/50">
 
+        <!-- Sidebar Navigation -->
         <aside class="w-full lg:w-72 bg-sidebarBg p-8 flex flex-col justify-between shrink-0 border-b lg:border-b-0 lg:border-r border-accentPurp/10">
             <div>
                 <!-- Logo & Brand -->
@@ -45,10 +46,10 @@
 
                 <!-- User Profile Badge -->
                 <div class="flex items-center space-x-3 mb-10 bg-white/40 p-3 rounded-2xl shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Sophia Thompson" class="w-12 h-12 rounded-full object-cover">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Profile" class="w-12 h-12 rounded-full object-cover">
                     <div>
-                        <h2 class="font-bold text-sm text-darkText">{{ Auth::user()->name ?? 'Sophia Thompson' }}</h2>
-                        <p class="text-xs text-mutedText font-medium">mentor</p>
+                        <h2 class="font-bold text-sm text-darkText">{{ Auth::user()->name ?? 'Student' }}</h2>
+                        <p class="text-xs text-mutedText font-medium">Student</p>
                     </div>
                 </div>
 
@@ -93,12 +94,14 @@
             </div>
         </aside>
 
+        <!-- Main Content Section -->
         <main class="flex-1 p-6 lg:p-10 flex flex-col justify-between overflow-y-auto">
-            
             <div>
                 <!-- Top Header Bar -->
                 <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                    <h2 class="text-2xl lg:text-3xl font-extrabold tracking-tight text-darkText">HELLO, SOPHIA!</h2>
+                    <h2 class="text-2xl lg:text-3xl font-extrabold tracking-tight text-darkText">
+                        HELLO, {{ strtoupper(Auth::user()->name ?? 'STUDENT') }}!
+                    </h2>
                     
                     <div class="flex items-center space-x-4 w-full sm:w-auto justify-end">
                         <!-- Search Bar -->
@@ -120,7 +123,6 @@
                 </header>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    
                     <!-- Linked Teachers Widget -->
                     <div class="bg-white/60 backdrop-blur-sm p-6 rounded-[2rem] shadow-sm border border-white">
                         <div class="flex justify-between items-center mb-4">
@@ -193,12 +195,10 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
-                    <!-- My Schedule Widget (Spans 2 columns) -->
+                    <!-- My Schedule Widget -->
                     <div class="lg:col-span-2 bg-white/60 backdrop-blur-sm p-6 rounded-[2rem] shadow-sm border border-white flex flex-col justify-between">
                         <div>
                             <h3 class="font-bold text-darkText text-base mb-4">My schedule</h3>
@@ -218,131 +218,4 @@
                                         <span class="py-1 text-mutedText">29</span><span class="py-1 text-mutedText">30</span><span class="py-1">1</span><span class="py-1">2</span><span class="py-1">3</span><span class="py-1">4</span><span class="py-1">5</span>
                                         <span class="py-1">6</span><span class="py-1">7</span><span class="py-1">8</span><span class="py-1">9</span><span class="py-1">10</span><span class="py-1">11</span><span class="py-1">12</span>
                                         <span class="py-1">13</span><span class="py-1">14</span><span class="py-1">15</span><span class="py-1 bg-accentPurp text-white rounded-full font-bold shadow-sm">16</span><span class="py-1">17</span><span class="py-1">18</span><span class="py-1">19</span>
-                                        <span class="py-1">20</span><span class="py-1">21</span><span class="py-1">22</span><span class="py-1">23</span><span class="py-1">24</span><span class="py-1">25</span><span class="py-1">26</span>
-                                        <span class="py-1">27</span><span class="py-1">28</span><span class="py-1">29</span><span class="py-1">30</span><span class="py-1">31</span><span class="py-1 text-mutedText">1</span><span class="py-1 text-mutedText">2</span>
-                                    </div>
-                                </div>
-
-                                <!-- Daily Schedule Items -->
-                                <div class="space-y-2.5 flex flex-col justify-center">
-                                    <div class="flex items-center justify-between p-3 bg-white/70 rounded-2xl shadow-xs">
-                                        <div class="flex items-center space-x-3">
-                                            <span class="font-bold text-xs text-darkText bg-sidebarBg w-7 h-7 rounded-full flex items-center justify-center">18</span>
-                                            <div>
-                                                <h4 class="font-bold text-xs text-darkText">Robotics lesson</h4>
-                                                <p class="text-[10px] text-mutedText">15:30</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center justify-between p-3 bg-white/70 rounded-2xl shadow-xs">
-                                        <div class="flex items-center space-x-3">
-                                            <span class="font-bold text-xs text-darkText bg-sidebarBg w-7 h-7 rounded-full flex items-center justify-center">19</span>
-                                            <div>
-                                                <h4 class="font-bold text-xs text-darkText">Electronics lesson</h4>
-                                                <p class="text-[10px] text-mutedText">16:00</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center justify-between p-3 bg-white/70 rounded-2xl shadow-xs">
-                                        <div class="flex items-center space-x-3">
-                                            <span class="font-bold text-xs text-darkText bg-sidebarBg w-7 h-7 rounded-full flex items-center justify-center">20</span>
-                                            <div>
-                                                <h4 class="font-bold text-xs text-darkText">C++ lesson</h4>
-                                                <p class="text-[10px] text-mutedText">17:30</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#785A74]/90 backdrop-blur-sm p-6 rounded-[2rem] shadow-lg text-white flex flex-col justify-between">
-                        <div class="space-y-6">
-                            
-                            <!-- Attendance Ring -->
-                            <div class="flex items-center justify-between bg-white/10 p-4 rounded-2xl">
-                                <div>
-                                    <h4 class="font-bold text-sm">Attendance</h4>
-                                    <p class="text-[11px] text-white/70 mt-0.5">Overall presence</p>
-                                </div>
-                                <div class="relative w-14 h-14 flex items-center justify-center">
-                                    <svg class="w-full h-full transform -rotate-90">
-                                        <circle cx="28" cy="28" r="22" stroke="currentColor" stroke-width="5" class="text-white/20" fill="transparent"/>
-                                        <circle cx="28" cy="28" r="22" stroke="#E87A90" stroke-width="5" stroke-dasharray="138" stroke-dashoffset="55" stroke-linecap="round" fill="transparent"/>
-                                    </svg>
-                                    <span class="absolute text-xs font-bold">60%</span>
-                                </div>
-                            </div>
-
-                            <!-- Homework Ring -->
-                            <div class="flex items-center justify-between bg-white/10 p-4 rounded-2xl">
-                                <div>
-                                    <h4 class="font-bold text-sm">Homework</h4>
-                                    <p class="text-[11px] text-white/70 mt-0.5">Completed tasks</p>
-                                </div>
-                                <div class="relative w-14 h-14 flex items-center justify-center">
-                                    <svg class="w-full h-full transform -rotate-90">
-                                        <circle cx="28" cy="28" r="22" stroke="currentColor" stroke-width="5" class="text-white/20" fill="transparent"/>
-                                        <circle cx="28" cy="28" r="22" stroke="#63B3A6" stroke-width="5" stroke-dasharray="138" stroke-dashoffset="14" stroke-linecap="round" fill="transparent"/>
-                                    </svg>
-                                    <span class="absolute text-xs font-bold">90%</span>
-                                </div>
-                            </div>
-
-                            <!-- Rating Ring -->
-                            <div class="flex items-center justify-between bg-white/10 p-4 rounded-2xl">
-                                <div>
-                                    <h4 class="font-bold text-sm">Rating</h4>
-                                    <p class="text-[11px] text-white/70 mt-0.5">Academic standing</p>
-                                </div>
-                                <div class="relative w-14 h-14 flex items-center justify-center">
-                                    <svg class="w-full h-full transform -rotate-90">
-                                        <circle cx="28" cy="28" r="22" stroke="currentColor" stroke-width="5" class="text-white/20" fill="transparent"/>
-                                        <circle cx="28" cy="28" r="22" stroke="#ECC94B" stroke-width="5" stroke-dasharray="138" stroke-dashoffset="35" stroke-linecap="round" fill="transparent"/>
-                                    </svg>
-                                    <span class="absolute text-xs font-bold">75%</span>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- See More Footer Button -->
-                        <div class="mt-6 pt-4 border-t border-white/20 text-right">
-                            <a href="#" class="text-xs font-bold text-white hover:underline inline-flex items-center space-x-1">
-                                <span>See more</span>
-                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="mt-6 bg-white/60 backdrop-blur-sm p-6 rounded-[2rem] shadow-sm border border-white">
-                    <h3 class="font-bold text-darkText text-base mb-4">My projects</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="relative rounded-2xl overflow-hidden group shadow-xs">
-                            <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=500&q=80" alt="Project 1" class="w-full h-32 object-cover group-hover:scale-105 transition duration-300">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
-                                <span class="text-white font-bold text-xs">Homework 15</span>
-                            </div>
-                        </div>
-                        <div class="relative rounded-2xl overflow-hidden group shadow-xs">
-                            <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=500&q=80" alt="Project 2" class="w-full h-32 object-cover group-hover:scale-105 transition duration-300">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
-                                <span class="text-white font-bold text-xs">Homework 16</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <footer class="mt-8 text-center text-xs text-mutedTrust font-medium">
-                Gradely Student Portal &copy; 2026 &bull; Powered by Laravel 11 & Tailwind CSS
-            </footer>
-
-        </main>
-
-    </body>
-</html>
+                                        <span class="py-1">20

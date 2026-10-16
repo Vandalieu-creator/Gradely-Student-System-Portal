@@ -2,29 +2,45 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Teacher extends Model
+class Teacher extends Authenticatable
 {
-    use HasFactory;
+    use Notifiable;
 
+    /**
+     * The table associated with the model.
+     */
+    protected $table = 'teachers';
+
+    /**
+     * The attributes that are mass assignable.
+     */
     protected $fillable = [
-        'user_id',
         'employee_id',
         'first_name',
         'last_name',
         'middle_name',
         'contact_number',
-        'address',
+        'password',
     ];
 
     /**
-     * A teacher belongs to one user account.
+     * The attributes that should be hidden for serialization.
      */
-    public function user(): BelongsTo
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     */
+    protected function casts(): array
     {
-        return $this->belongsTo(User::class);
+        return [
+            'password' => 'hashed',
+        ];
     }
 }
