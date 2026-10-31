@@ -52,8 +52,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
-    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
-
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
+    Route::put('password', [PasswordController::class, 'update'])
+        ->name('password.update');
 });
+
+// Logout is outside the default auth group.
+Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth:web,teacher')
+    ->name('logout');

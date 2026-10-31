@@ -52,13 +52,15 @@ class AuthenticatedSessionController extends Controller
             // Query teachers table directly
             $teacher = Teacher::where('employee_id', $request->employee_id)->first();
 
-            if ($teacher && Hash::check($request->password, $teacher->password)) {
-                // Log teacher in
-                Auth::login($teacher, false);
-                $request->session()->regenerate();
+if ($teacher && Hash::check($request->password, $teacher->password)) {
 
-                return redirect()->intended('/teacher/dashboard');
-            }
+    Auth::guard('web')->logout();
+    Auth::guard('teacher')->login($teacher, false);
+
+    $request->session()->regenerate();
+
+    return redirect()->route('teacher.dashboard');
+}
 
             return back()->withErrors([
                 'employee_id' => 'Invalid Employee ID or password.',
@@ -68,14 +70,14 @@ class AuthenticatedSessionController extends Controller
         return back();
     }
 
-    public function destroy(Request $request): RedirectResponse
-    {
-        Auth::guard('web')->logout();
+public function destroy(Request $request): RedirectResponse
+{
+    Auth::guard('web')->logout();
+    Auth::guard('teacher')->logout();
 
-        $request->session()->invalidate();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-        $request->session()->regenerateToken();
-
-        return redirect('/');
-    }
+    return redirect('/');
+}
 }
