@@ -1,5 +1,9 @@
 <?php
 
+
+
+use App\Http\Controllers\TeacherStudentController;
+use App\Http\Controllers\TeacherClassController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,14 +48,51 @@ Route::middleware(['auth', 'verified', 'role:admin'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:teacher'])
-    ->prefix('teacher')
-    ->name('teacher.')
-    ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('teacher.dashboard');
-        })->name('dashboard');
-    });
+Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('teacher.dashboard');
+    })->name('dashboard');
+
+    Route::get('/classes', [TeacherClassController::class, 'index'])
+        ->name('classes.index');
+
+    Route::get('/classes/create', [TeacherClassController::class, 'create'])
+        ->name('classes.create');
+
+    Route::post('/classes', [TeacherClassController::class, 'store'])
+        ->name('classes.store');
+
+    Route::get('/classes/{class}/students', [TeacherStudentController::class, 'index'])
+        ->name('classes.students.index');
+
+     Route::get('/classes/{class}/students/archived', [TeacherStudentController::class, 'archived'])
+         ->name('classes.students.archived');
+
+        Route::get('/classes/{class}/students/{student}', [TeacherStudentController::class, 'show'])
+    ->name('classes.students.show');
+       
+    Route::get('/classes/{class}/students/{student}/edit', [TeacherStudentController::class, 'edit'])
+    ->name('classes.students.edit');
+
+    Route::put('/classes/{class}/students/{student}', [TeacherStudentController::class, 'update'])
+    ->name('classes.students.update');
+
+    Route::delete('/classes/{class}/students/{student}', [TeacherStudentController::class, 'destroy'])
+    ->name('classes.students.destroy');
+    
+    Route::post('/classes/{class}/students/{student}/restore', [TeacherStudentController::class, 'restore'])
+    ->name('classes.students.restore');
+
+        Route::get('/classes/{class}/students/create', [TeacherStudentController::class, 'create'])
+    ->name('classes.students.create');
+
+     Route::post('/classes/{class}/students', [TeacherStudentController::class, 'store'])
+    ->name('classes.students.store');
+
+
+    
+        
+});
 
 /*
 |--------------------------------------------------------------------------
