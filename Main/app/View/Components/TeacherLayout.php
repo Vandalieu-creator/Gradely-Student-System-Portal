@@ -24,3 +24,4 @@ class TeacherLayout extends Component
         return view('layouts.teacher');
     }
 }
+
