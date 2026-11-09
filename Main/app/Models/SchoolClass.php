@@ -42,4 +42,16 @@ class SchoolClass extends Model
     {
         return $this->hasMany(Grade::class, 'class_id');
     }
+    
+    // A class can have multiple grading configurations.
+    public function gradingConfigurations(): HasMany
+    {
+        return $this->hasMany(GradingConfiguration::class, 'class_id');
+    }
+
+    // A class can have multiple assessment activities.
+    public function assessmentActivities(): HasMany
+    {
+        return $this->hasMany(AssessmentActivity::class, 'class_id');
+    }
 }

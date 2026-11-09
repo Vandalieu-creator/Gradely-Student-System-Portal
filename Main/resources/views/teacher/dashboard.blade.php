@@ -44,8 +44,21 @@
         $totalGradeRecords = $teacher->grades()->count();
     @endphp
 
-    <div class="min-h-screen bg-slate-50 py-10">
-        <div class="mx-auto max-w-7xl space-y-8 px-6 sm:px-8 lg:px-10">
+    <div
+        x-data="{
+            sidebarCollapsed: localStorage.getItem('gradely_teacher_sidebar_collapsed') === 'true',
+            toggleSidebar() {
+                this.sidebarCollapsed = !this.sidebarCollapsed;
+                localStorage.setItem('gradely_teacher_sidebar_collapsed', this.sidebarCollapsed);
+            }
+        }"
+        class="flex min-h-screen">
+
+        <x-teacher-sidebar active="dashboard" />
+
+        <div class="min-w-0 flex-1">
+            <div class="min-h-screen bg-slate-50 py-10">
+                <div class="mx-auto max-w-7xl space-y-8 px-6 sm:px-8 lg:px-10">
 
             <!-- Dashboard Heading -->
             <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
@@ -442,6 +455,8 @@
 
             </div>
 
+                 </div>
+            </div>
         </div>
     </div>
 </x-app-layout>

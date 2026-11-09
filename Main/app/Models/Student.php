@@ -44,4 +44,10 @@ class Student extends Model
     {
         return $this->hasMany(Grade::class);
     }
+
+    // A student can have multiple assessment scores.
+    public function assessmentScores(): HasMany
+    {
+        return $this->hasMany(StudentAssessmentScore::class, 'student_id');
+    }
 }
