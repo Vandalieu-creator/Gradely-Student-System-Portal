@@ -1,210 +1,138 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div>
-            <h2 class="text-xl font-semibold text-gray-800">
-                Archived Students
-            </h2>
-            <p class="mt-1 text-sm text-gray-500">
-                Students removed from the active classroom list.
-            </p>
-        </div>
-    </x-slot>
+<x-teacher-layout active="students" title="Archived Students — {{ $class->class_name }}">
 
-    <div class="py-8">
-        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-
-            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
-                <h3 class="font-semibold text-amber-900">
-                    Archived Student Records
-                </h3>
-                <p class="mt-1 text-sm text-amber-800">
-                    These students have been removed from the active classroom
-                    roster. Their grades and attendance records are preserved.
-                    You can restore a student when necessary.
+    <!-- Top Navigation Header -->
+    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-20 px-6 py-4">
+        <div class="flex items-center space-x-3 max-w-7xl mx-auto">
+            <a href="{{ route('teacher.classes.students.index', $class) }}" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-arrow-left text-sm"></i>
+            </a>
+            <div>
+                <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">
+                    Archived Students
+                </h1>
+                <p class="text-xs font-semibold text-slate-500">
+                    {{ $class->class_name }} • Removed students with preserved academic records
                 </p>
             </div>
+        </div>
+    </header>
 
-            <div class="rounded-xl bg-white p-6 shadow-sm">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
-                <div class="mb-6 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            {{ $class->class_name }} — Archived Students
-                        </h3>
-                        <p class="text-sm text-gray-500">
-                            {{ $class->grade_level }} ·
-                            Section {{ $class->section }} ·
-                            {{ $class->school_year }}
-                        </p>
-                    </div>
+        <div class="flex justify-between items-center">
+            <a href="{{ route('teacher.classes.students.index', $class) }}"
+               class="text-xs font-bold text-slate-500 hover:text-sky-600 transition flex items-center space-x-1.5">
+                <span>← Back to Active Student Roster</span>
+            </a>
+        </div>
 
-                    <a href="{{ route('teacher.classes.students.index', $class) }}"
-                       style="background-color: #172554; color: white;"
-                       class="rounded-xl px-4 py-2 text-sm font-semibold">
-                        Back to Student List
-                    </a>
-                </div>
-
-                <p class="mb-4 text-sm text-gray-600">
-                    Archived Students: {{ $students->count() }}
+        <div class="rounded-3xl border border-amber-200 bg-amber-50/60 p-5 flex items-start space-x-3">
+            <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-box-archive text-sm"></i>
+            </div>
+            <div class="text-xs text-amber-900">
+                <p class="font-bold text-sm">Archived Records Notice</p>
+                <p class="mt-0.5 leading-relaxed">
+                    These students have been removed from the active classroom roster. Their grades and attendance records are permanently preserved, and they can be restored back to the classroom at any time.
                 </p>
+            </div>
+        </div>
 
-                @if ($students->isEmpty())
-                    <div class="rounded-xl border border-gray-200 p-8 text-center">
-                        <p class="font-semibold text-gray-700">
-                            No archived students found.
-                        </p>
-                        <p class="mt-1 text-sm text-gray-500">
-                            Students removed from this classroom will appear here.
-                        </p>
-                    </div>
-                @else
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 text-gray-600">
-                                <tr>
-                                    <th class="px-4 py-3">#</th>
-                                    <th class="px-4 py-3">Student Name</th>
-                                    <th class="px-4 py-3">LRN</th>
-                                    <th class="px-4 py-3">Removed Date</th>
-                                    <th class="px-4 py-3">Status</th>
-                                    <th class="px-4 py-3">Action</th>
+        <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-base">{{ $class->class_name }} — Archived List</h3>
+                    <p class="text-xs text-slate-500">{{ $students->count() }} archived student records</p>
+                </div>
+            </div>
 
+            @if ($students->isEmpty())
+                <div class="px-6 py-16 text-center">
+                    <p class="font-bold text-slate-700 text-base">No archived students found.</p>
+                    <p class="mt-1 text-xs text-slate-400">Students removed from this classroom will appear here.</p>
+                </div>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-[10px] border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4">#</th>
+                                <th class="py-3 px-4">Student Name</th>
+                                <th class="py-3 px-4">LRN</th>
+                                <th class="py-3 px-4">Archived Date</th>
+                                <th class="py-3 px-4">Status</th>
+                                <th class="py-3 px-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @foreach ($students as $student)
+                                <tr class="hover:bg-slate-50/80 transition" x-data="{ showRestoreModal: false }">
+                                    <td class="py-3.5 px-4 font-mono text-slate-400">{{ $loop->iteration }}</td>
+                                    <td class="py-3.5 px-4 font-bold text-slate-900">
+                                        {{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}
+                                    </td>
+                                    <td class="py-3.5 px-4 font-mono text-slate-500">{{ $student->lrn }}</td>
+                                    <td class="py-3.5 px-4 text-slate-500">{{ $student->deleted_at?->format('M d, Y') }}</td>
+                                    <td class="py-3.5 px-4">
+                                        <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px]">
+                                            Archived
+                                        </span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right">
+                                        <button type="button"
+                                                @click="showRestoreModal = true"
+                                                class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition cursor-pointer">
+                                            Restore
+                                        </button>
+
+                                        <!-- Restore Modal -->
+                                        <div x-show="showRestoreModal"
+                                             x-cloak
+                                             x-transition.opacity
+                                             @keydown.escape.window="showRestoreModal = false"
+                                             class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 text-left"
+                                             style="display: none;">
+                                            <div @click.outside="showRestoreModal = false"
+                                                 class="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl border-4 border-slate-100 space-y-4">
+                                                
+                                                <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl font-bold">
+                                                    ✓
+                                                </div>
+
+                                                <div class="text-center">
+                                                    <h3 class="text-lg font-bold text-slate-900">Restore Student?</h3>
+                                                    <p class="mt-2 text-xs text-slate-600">
+                                                        Restore <strong>{{ $student->first_name }} {{ $student->last_name }}</strong> to active classroom list?
+                                                    </p>
+                                                    <p class="mt-1 text-[11px] text-emerald-700 font-semibold">
+                                                        Preserved grades and attendance will be reactivated.
+                                                    </p>
+                                                </div>
+
+                                                <div class="flex items-center justify-center space-x-2 pt-2">
+                                                    <button type="button"
+                                                            @click="showRestoreModal = false"
+                                                            class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer">
+                                                        Cancel
+                                                    </button>
+                                                    <form action="{{ route('teacher.classes.students.restore', [$class, $student->id]) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition cursor-pointer">
+                                                            Yes, Restore Student
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-
-                            <tbody class="divide-y divide-gray-200">
-                                @foreach ($students as $student)
-                                    <tr>
-                                        <td class="px-4 py-3">
-                                            {{ $loop->iteration }}
-                                        </td>
-
-                                        <td class="px-4 py-3 font-semibold text-gray-900">
-                                            {{ $student->first_name }}
-                                            {{ $student->middle_name }}
-                                            {{ $student->last_name }}
-                                        </td>
-
-                                        <td class="px-4 py-3">
-                                            {{ $student->lrn }}
-                                        </td>
-
-                                        <td class="px-4 py-3">
-                                            {{ $student->deleted_at->format('M d, Y') }}
-                                        </td>
-
-                                        <td class="px-4 py-3">
-                                            <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
-                                                Archived
-                                            </span>
-                                        </td>
-                                     <td class="px-4 py-3 text-sm">
-
-    <div x-data="{ showRestoreModal: false }">
-
-        <!-- Open Confirmation Modal -->
-        <button type="button"
-                @click="showRestoreModal = true"
-                style="background-color: #166534; color: white;"
-                class="rounded-xl px-4 py-2 text-xs font-semibold hover:opacity-90">
-            Restore Student
-        </button>
-
-        <!-- Confirmation Modal -->
-        <div
-            x-show="showRestoreModal"
-            x-cloak
-            x-transition.opacity
-            @keydown.escape.window="showRestoreModal = false"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4"
-            style="display: none;"
-        >
-
-            <div
-                @click.outside="showRestoreModal = false"
-                x-transition.scale
-                class="w-full max-w-md rounded-2xl bg-white p-7 shadow-2xl"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="restore-modal-title"
-            >
-
-                <!-- Warning Icon -->
-                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         class="h-8 w-8 text-emerald-700"
-                         fill="none"
-                         viewBox="0 0 24 24"
-                         stroke="currentColor"
-                         stroke-width="2">
-                        <path stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M5 13l4 4L19 7" />
-                    </svg>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-
-                <!-- Modal Message -->
-                <div class="mt-5 text-center">
-
-                    <h3 id="restore-modal-title"
-                        class="text-xl font-bold text-slate-900">
-                        Restore Student?
-                    </h3>
-
-                    <p class="mt-3 text-sm leading-6 text-slate-600">
-                        Are you sure you want to restore
-                        <span class="font-bold text-slate-900">
-                            {{ $student->first_name }}
-                            {{ $student->last_name }}
-                        </span>
-                        to the active classroom list?
-                    </p>
-
-                    <p class="mt-2 text-xs text-emerald-700">
-                        The student's existing grades and attendance records will be preserved.
-                    </p>
-
-                </div>
-
-                <!-- Modal Actions -->
-                <div class="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-center">
-
-                    <!-- Cancel -->
-                    <button type="button"
-                            @click="showRestoreModal = false"
-                            class="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                        Cancel
-                    </button>
-
-                    <!-- Confirm Restore -->
-                    <form action="{{ route('teacher.classes.students.restore', [$class, $student->id]) }}"
-                          method="POST">
-                        @csrf
-
-                        <button type="submit"
-                                style="background-color: #166534; color: white;"
-                                class="w-full rounded-xl px-5 py-3 text-sm font-semibold hover:opacity-90">
-                            Yes, Restore Student
-                        </button>
-                    </form>
-
-                </div>
-
-            </div>
+            @endif
         </div>
 
     </div>
 
-</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+</x-teacher-layout>

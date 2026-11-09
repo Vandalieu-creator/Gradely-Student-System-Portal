@@ -9,13 +9,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('lrn')->nullable()->unique();
-        });
+        if (!Schema::hasColumn('users', 'lrn')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('lrn')->nullable()->unique();
+            });
+        }
 
-        Schema::table('teachers', function (Blueprint $table) {
-            $table->string('password');
-        });
+        if (!Schema::hasColumn('teachers', 'password')) {
+            Schema::table('teachers', function (Blueprint $table) {
+                $table->string('password')->nullable();
+            });
+        }
     }
 
     public function down(): void

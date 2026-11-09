@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\TeacherStudentController;
 use App\Http\Controllers\TeacherClassController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -49,9 +50,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])
 */
 
 Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('teacher.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [TeacherController::class, 'dashboard'])
+        ->name('dashboard');
 
     Route::get('/classes', [TeacherClassController::class, 'index'])
         ->name('classes.index');
@@ -61,6 +61,9 @@ Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(
 
     Route::post('/classes', [TeacherClassController::class, 'store'])
         ->name('classes.store');
+
+    Route::get('/students', [TeacherController::class, 'students'])
+        ->name('students.all');
 
     Route::get('/classes/{class}/students', [TeacherStudentController::class, 'index'])
         ->name('classes.students.index');
@@ -89,9 +92,29 @@ Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(
      Route::post('/classes/{class}/students', [TeacherStudentController::class, 'store'])
     ->name('classes.students.store');
 
+    // New Teacher Sidebar Dashboard Routes
+    Route::get('/attendance', [TeacherController::class, 'attendance'])
+        ->name('attendance.index');
+    Route::post('/attendance', [TeacherController::class, 'saveAttendance'])
+        ->name('attendance.store');
 
-    
-        
+    Route::get('/schedule', [TeacherController::class, 'schedule'])
+        ->name('schedule.index');
+
+    Route::get('/assignments', [TeacherController::class, 'assignments'])
+        ->name('assignments.index');
+
+    Route::get('/materials', [TeacherController::class, 'materials'])
+        ->name('materials.index');
+
+    Route::get('/grades', [TeacherController::class, 'grades'])
+        ->name('grades.index');
+
+    Route::get('/announcements', [TeacherController::class, 'announcements'])
+        ->name('announcements.index');
+
+    Route::get('/messages', [TeacherController::class, 'messages'])
+        ->name('messages.index');
 });
 
 /*

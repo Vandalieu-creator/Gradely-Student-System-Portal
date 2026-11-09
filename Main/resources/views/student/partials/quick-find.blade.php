@@ -20,10 +20,10 @@
                    x-model="quickSearchQuery" 
                    x-ref="quickSearchInput"
                    x-init="$watch('showQuickFind', value => { if (value) setTimeout(() => $refs.quickSearchInput?.focus(), 100); })"
-                   placeholder="Quick search subjects, homework, grades, teacher..." 
+                   placeholder="Quick search subjects, homework, grades, teacher, schedule..." 
                    class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-[#1b2b42] border border-slate-600/70 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 font-medium">
             
-            <button @click="showQuickFind = false" class="absolute right-3.5 text-slate-400 hover:text-white text-sm font-bold p-1 cursor-pointer">
+            <button @click="showQuickFind = false; quickSearchQuery = ''" class="absolute right-3.5 text-slate-400 hover:text-white text-sm font-bold p-1 cursor-pointer">
                 ✕
             </button>
         </div>
@@ -31,14 +31,13 @@
         <!-- Quick Suggestions List -->
         <div class="space-y-1.5 max-h-72 overflow-y-auto pr-1 text-sm custom-scrollbar">
             
-            <!-- Quick Links Header -->
-            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-2">Suggestions</p>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-2">Suggestions & Actions</p>
 
-            <!-- Dashboard -->
+            <!-- 1. Dashboard -->
             <a href="{{ route('student.dashboard') }}" 
                @click="showQuickFind = false"
                x-show="!quickSearchQuery || 'dashboard home'.includes(quickSearchQuery.toLowerCase())"
-               class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition group">
+               class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition group cursor-pointer">
                 <div class="flex items-center space-x-3">
                     <span class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center">
                         <i class="fa-solid fa-house text-xs"></i>
@@ -51,24 +50,40 @@
                 <span class="text-[11px] text-slate-400 group-hover:text-sky-300">Jump &rarr;</span>
             </a>
 
-            <!-- View My Grades -->
+            <!-- 2. View My Grades / Report Card -->
             <a href="{{ route('student.grades') }}" 
                @click="showQuickFind = false"
                x-show="!quickSearchQuery || 'grades report card grading marks scores'.includes(quickSearchQuery.toLowerCase())"
-               class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition group">
+               class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition group cursor-pointer">
                 <div class="flex items-center space-x-3">
                     <span class="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center">
                         <i class="fa-solid fa-graduation-cap text-xs"></i>
                     </span>
                     <div>
-                        <p class="font-bold text-white text-xs sm:text-sm">View My Grades & Report Card</p>
+                        <p class="font-bold text-white text-xs sm:text-sm">View Report Card & Grades</p>
                         <p class="text-[11px] text-slate-400">Quarter 1 to 4 academic grades</p>
                     </div>
                 </div>
                 <span class="text-[11px] text-teal-300 font-bold">91.8% Avg</span>
             </a>
 
-            <!-- Math Homework -->
+            <!-- 3. Daily Class Schedule (Opens Schedule Modal) -->
+            <div @click="showQuickFind = false; showScheduleModal = true" 
+                 x-show="!quickSearchQuery || 'schedule class time periods routine bell timetable'.includes(quickSearchQuery.toLowerCase())"
+                 class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition cursor-pointer group">
+                <div class="flex items-center space-x-3">
+                    <span class="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                        📅
+                    </span>
+                    <div>
+                        <p class="font-bold text-white text-xs sm:text-sm">Daily Class Schedule</p>
+                        <p class="text-[11px] text-slate-400">Grade 4 - Diamond timetable & periods</p>
+                    </div>
+                </div>
+                <span class="text-[11px] text-indigo-400 font-bold">Open &rarr;</span>
+            </div>
+
+            <!-- 4. Math Homework -->
             <div @click="showQuickFind = false; window.location.href = '{{ route('student.dashboard') }}#homework'" 
                  x-show="!quickSearchQuery || 'math worksheet adding subtracting homework'.includes(quickSearchQuery.toLowerCase())"
                  class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition cursor-pointer group">
@@ -84,7 +99,7 @@
                 <span class="text-[11px] text-emerald-400 font-bold">+10 ⭐</span>
             </div>
 
-            <!-- Art Homework Task -->
+            <!-- 5. Art Homework Task (Opens Modal) -->
             <div @click="showQuickFind = false; showModal = true" 
                  x-show="!quickSearchQuery || 'draw animal art homework mapeh task'.includes(quickSearchQuery.toLowerCase())"
                  class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition cursor-pointer group">
@@ -100,9 +115,9 @@
                 <span class="text-[11px] text-orange-400 font-bold">Start &rarr;</span>
             </div>
 
-            <!-- Ask Teacher Mrs. Miller -->
+            <!-- 6. Ask Teacher Mrs. Miller (Opens Chat Modal) -->
             <div @click="showQuickFind = false; showTeacherModal = true" 
-                 x-show="!quickSearchQuery || 'teacher mrs miller ask help message question'.includes(quickSearchQuery.toLowerCase())"
+                 x-show="!quickSearchQuery || 'teacher mrs miller ask help message question support'.includes(quickSearchQuery.toLowerCase())"
                  class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition cursor-pointer group">
                 <div class="flex items-center space-x-3">
                     <span class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center">
@@ -113,7 +128,39 @@
                         <p class="text-[11px] text-slate-400">Homeroom Teacher &bull; Send a question</p>
                     </div>
                 </div>
-                <span class="text-[11px] text-sky-400 font-bold">Send &rarr;</span>
+                <span class="text-[11px] text-sky-400 font-bold">Chat &rarr;</span>
+            </div>
+
+            <!-- 7. Student Help & FAQs (Opens Help Modal) -->
+            <div @click="showQuickFind = false; showHelpModal = true" 
+                 x-show="!quickSearchQuery || 'help faq guide rules stars standing support'.includes(quickSearchQuery.toLowerCase())"
+                 class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition cursor-pointer group">
+                <div class="flex items-center space-x-3">
+                    <span class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                        🌟
+                    </span>
+                    <div>
+                        <p class="font-bold text-white text-xs sm:text-sm">Student Guide & FAQs</p>
+                        <p class="text-[11px] text-slate-400">How to earn stars, check grades, etc.</p>
+                    </div>
+                </div>
+                <span class="text-[11px] text-purple-400 font-bold">View &rarr;</span>
+            </div>
+
+            <!-- 8. Subjects Overview -->
+            <div @click="showQuickFind = false; window.location.href = '{{ route('student.dashboard') }}#subjects'" 
+                 x-show="!quickSearchQuery || 'subjects science math english filipino mapeh esp curriculum'.includes(quickSearchQuery.toLowerCase())"
+                 class="flex items-center justify-between p-3 rounded-2xl hover:bg-white/10 transition cursor-pointer group">
+                <div class="flex items-center space-x-3">
+                    <span class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                        📚
+                    </span>
+                    <div>
+                        <p class="font-bold text-white text-xs sm:text-sm">Curriculum & Subjects</p>
+                        <p class="text-[11px] text-slate-400">All 7 elementary learning areas</p>
+                    </div>
+                </div>
+                <span class="text-[11px] text-emerald-400 font-bold">View &rarr;</span>
             </div>
 
         </div>
