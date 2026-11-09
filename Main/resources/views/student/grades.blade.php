@@ -16,7 +16,13 @@
                     colors: {
                         brandTeal: '#459885',
                         brandTealHover: '#377A6B',
-                        darkText: '#2D3748'
+                        darkText: '#2D3748',
+                        kidPurple: '#C084FC',
+                        kidPink: '#F472B6',
+                        kidYellow: '#FDE047',
+                        kidGreen: '#4ADE80',
+                        kidOrange: '#FB923C',
+                        kidBlue: '#38BDF8'
                     },
                     fontFamily: {
                         sans: ['Fredoka', 'sans-serif']
@@ -40,7 +46,15 @@
 </head>
 <body class="bg-gradient-to-br from-teal-300 via-sky-400 to-pink-200 min-h-screen text-darkText font-sans antialiased overflow-x-hidden"
       x-data="{ 
-          selectedQuarter: null,
+          selectedQuarter: new URLSearchParams(window.location.search).get('quarter') || null,
+          showModal: false, 
+          showTeacherModal: false,
+          showScheduleModal: false,
+          showHelpModal: false,
+          showToast: false,
+          teacherMessage: '',
+          taskDone: false, 
+          stars: 125,
           sidebarCollapsed: localStorage.getItem('gradely_student_sidebar_collapsed') === 'true',
           mobileSidebarOpen: false,
           showQuickFind: false,
@@ -48,8 +62,18 @@
           toggleSidebar() {
               this.sidebarCollapsed = !this.sidebarCollapsed;
               localStorage.setItem('gradely_student_sidebar_collapsed', this.sidebarCollapsed);
+          },
+          sendTeacherMessage() {
+              if (this.teacherMessage.trim() === '') return;
+              this.showTeacherModal = false;
+              this.teacherMessage = '';
+              this.showToast = true;
+              setTimeout(() => { this.showToast = false; }, 3500);
           }
       }">
+
+    <!-- Global Modals (Teacher Chat, Homework, Schedule, Guide, Toast) -->
+    @include('student.partials.student-modals')
 
     <!-- Quick Find Global Modal -->
     @include('student.partials.quick-find')

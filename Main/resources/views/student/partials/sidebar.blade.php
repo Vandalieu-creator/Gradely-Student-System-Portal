@@ -88,6 +88,10 @@
                             <i class="fa-solid fa-graduation-cap text-teal-400 text-xs"></i>
                             <span>View Grades</span>
                         </a>
+                        <button type="button" @click="openRoleMenu = false; showScheduleModal = true" class="w-full flex items-center space-x-2 p-2 rounded-xl hover:bg-white/10 transition text-slate-200 text-left cursor-pointer">
+                            <i class="fa-solid fa-calendar-days text-indigo-400 text-xs"></i>
+                            <span>Daily Schedule</span>
+                        </button>
                         <form method="POST" action="{{ route('logout') }}" class="pt-1 border-t border-slate-700/60 mt-1">
                             @csrf
                             <button type="submit" class="w-full flex items-center space-x-2 p-2 rounded-xl hover:bg-red-500/20 text-red-400 transition cursor-pointer text-left">
@@ -155,7 +159,7 @@
 
                 <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
-                     class="hidden group-hover:flex absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 items-center pointer-events-none">
+                     class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Dashboard</span>
                     <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#0d1624] border-l border-b border-slate-700 transform rotate-45"></div>
                 </div>
@@ -185,8 +189,8 @@
 
                 <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
-                     class="hidden group-hover:flex absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 items-center pointer-events-none">
-                    <span>Quick Find</span>
+                     class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
+                    <span>Quick Find (⌘K)</span>
                     <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#0d1624] border-l border-b border-slate-700 transform rotate-45"></div>
                 </div>
             </div>
@@ -234,9 +238,9 @@
                     <a href="{{ route('student.dashboard') }}#subjects" class="block py-1.5 text-slate-300 hover:text-white transition">
                         🏫 Grade 4 - Diamond
                     </a>
-                    <a href="#homework" class="block py-1.5 text-slate-300 hover:text-white transition">
+                    <button type="button" @click="showScheduleModal = true" class="block py-1.5 text-indigo-300 hover:text-white transition text-left w-full cursor-pointer">
                         📅 Daily Schedule
-                    </a>
+                    </button>
                     <button type="button" @click="showTeacherModal = true" class="block py-1.5 text-slate-300 hover:text-white transition text-left w-full cursor-pointer">
                         👩‍🏫 Mrs. Miller (Homeroom)
                     </button>
@@ -244,7 +248,7 @@
 
                 <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
-                     class="hidden group-hover:flex absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 items-center pointer-events-none">
+                     class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Classroom</span>
                     <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#0d1624] border-l border-b border-slate-700 transform rotate-45"></div>
                 </div>
@@ -291,17 +295,17 @@
                     <a href="{{ route('student.dashboard') }}#homework" class="block py-1.5 text-slate-300 hover:text-white transition">
                         📝 Today's Homework
                     </a>
-                    <button type="button" @click="showModal = true" class="block py-1.5 text-slate-300 hover:text-white transition text-left w-full cursor-pointer">
+                    <button type="button" @click="showModal = true" class="block py-1.5 text-orange-300 hover:text-white transition text-left w-full cursor-pointer">
                         🎨 Animal Drawing Task
                     </button>
-                    <a href="{{ route('student.dashboard') }}" class="block py-1.5 text-slate-300 hover:text-white transition">
+                    <a href="{{ route('student.dashboard') }}#homework" class="block py-1.5 text-slate-300 hover:text-white transition">
                         ✅ Completed Tasks (2/3)
                     </a>
                 </div>
 
                 <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
-                     class="hidden group-hover:flex absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 items-center pointer-events-none">
+                     class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Assignments</span>
                     <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#0d1624] border-l border-b border-slate-700 transform rotate-45"></div>
                 </div>
@@ -347,17 +351,23 @@
                     <a href="{{ route('student.grades') }}" class="block py-1.5 text-teal-300 hover:text-white font-semibold transition">
                         📊 View Full Report Card
                     </a>
-                    <a href="{{ route('student.grades') }}" class="block py-1.5 text-slate-300 hover:text-white transition">
+                    <a href="{{ route('student.grades') }}?quarter=q1" class="block py-1.5 text-slate-300 hover:text-white transition">
                         🥇 1st Quarter (92.5%)
                     </a>
-                    <a href="{{ route('student.grades') }}" class="block py-1.5 text-slate-300 hover:text-white transition">
+                    <a href="{{ route('student.grades') }}?quarter=q2" class="block py-1.5 text-slate-300 hover:text-white transition">
                         🥈 2nd Quarter (91.8%)
+                    </a>
+                    <a href="{{ route('student.grades') }}?quarter=q3" class="block py-1.5 text-slate-300 hover:text-white transition">
+                        🥉 3rd Quarter
+                    </a>
+                    <a href="{{ route('student.grades') }}?quarter=q4" class="block py-1.5 text-slate-300 hover:text-white transition">
+                        🏆 4th Quarter
                     </a>
                 </div>
 
                 <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
-                     class="hidden group-hover:flex absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 items-center pointer-events-none">
+                     class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Grading</span>
                     <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#0d1624] border-l border-b border-slate-700 transform rotate-45"></div>
                 </div>
@@ -417,7 +427,7 @@
 
                 <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
-                     class="hidden group-hover:flex absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 items-center pointer-events-none">
+                     class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Curriculum</span>
                     <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#0d1624] border-l border-b border-slate-700 transform rotate-45"></div>
                 </div>
@@ -462,17 +472,17 @@
                     <button type="button" @click="showTeacherModal = true" class="block py-1.5 text-sky-300 hover:text-white font-medium transition text-left w-full cursor-pointer">
                         💬 Ask Mrs. Miller
                     </button>
-                    <a href="{{ route('student.dashboard') }}" class="block py-1.5 text-slate-300 hover:text-white transition">
-                        ❓ Student FAQs & Help
-                    </a>
-                    <a href="{{ route('student.dashboard') }}" class="block py-1.5 text-slate-300 hover:text-white transition">
+                    <button type="button" @click="showHelpModal = true" class="block py-1.5 text-purple-300 hover:text-white transition text-left w-full cursor-pointer">
+                        🌟 Student FAQs & Help
+                    </button>
+                    <button type="button" @click="showHelpModal = true" class="block py-1.5 text-slate-300 hover:text-white transition text-left w-full cursor-pointer">
                         🏫 School Guidelines
-                    </a>
+                    </button>
                 </div>
 
                 <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
-                     class="hidden group-hover:flex absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 items-center pointer-events-none">
+                     class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Support</span>
                     <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#0d1624] border-l border-b border-slate-700 transform rotate-45"></div>
                 </div>

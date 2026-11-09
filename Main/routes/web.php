@@ -1,9 +1,9 @@
+
 <?php
 
-
-
-use App\Http\Controllers\Teacher\EClassRecordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Teacher\EClassRecordController;
+use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,60 +47,93 @@ Route::middleware(['auth', 'verified', 'role:admin'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('teacher.dashboard');
-    })->name('dashboard');
+Route::middleware(['auth:teacher'])
+    ->prefix('teacher')
+    ->name('teacher.')
+    ->group(function () {
 
-    // My Students
-    Route::get('/my-students', function () {
-        return view('teacher.my-students');
-    })->name('my-students');
+        // Dashboard
+        Route::get('/dashboard', [TeacherController::class, 'dashboard'])
+            ->name('dashboard');
 
-    // Phil-IRI Reading
-    Route::get('/phil-iri-reading', function () {
-        return view('teacher.phil-iri-reading');
-    })->name('phil-iri-reading');
+        // My Students - new implementation
+        Route::get('/my-students', function () {
+            return view('teacher.my-students');
+        })->name('my-students');
 
-    // Attendance
-    Route::get('/attendance', function () {
-        return view('teacher.attendance');
-    })->name('attendance');
+        // Phil-IRI Reading
+        Route::get('/phil-iri-reading', function () {
+            return view('teacher.phil-iri-reading');
+        })->name('phil-iri-reading');
 
-    // DepEd Reports
-    Route::get('/deped-reports', function () {
-        return view('teacher.deped-reports');
-    })->name('deped-reports');
+        // Attendance
+        Route::get('/attendance', [TeacherController::class, 'attendance'])
+            ->name('attendance.index');
 
-    // Class Settings
-    Route::get('/class-settings', function () {
-        return view('teacher.class-settings');
-    })->name('class-settings');
+        Route::post('/attendance', [TeacherController::class, 'saveAttendance'])
+            ->name('attendance.store');
 
-    
-    // E-Class Record Routes
-    Route::get('/e-class-record', [EClassRecordController::class, 'index'])
-        ->name('e-class-record');
+        // Class Schedule
+        Route::get('/schedule', [TeacherController::class, 'schedule'])
+            ->name('schedule.index');
 
-    // Assessment Activities
-    Route::post('/e-class-record/activities', [EClassRecordController::class, 'storeActivity'])
-        ->name('e-class-record.activities.store');
+        // Assignments
+        Route::get('/assignments', [TeacherController::class, 'assignments'])
+            ->name('assignments.index');
 
-    Route::put('/e-class-record/activities/{activity}', [EClassRecordController::class, 'updateActivity'])
-        ->name('e-class-record.activities.update');
+        // Learning Materials
+        Route::get('/materials', [TeacherController::class, 'materials'])
+            ->name('materials.index');
 
-    Route::delete('/e-class-record/activities/{activity}', [EClassRecordController::class, 'destroyActivity'])
-        ->name('e-class-record.activities.destroy');
+        // Grades
+        Route::get('/grades', [TeacherController::class, 'grades'])
+            ->name('grades.index');
 
-    // Student Assessment Scores
-    Route::put('/e-class-record/activities/{activity}/students/{student}/score', [EClassRecordController::class, 'updateScore'])
-        ->name('e-class-record.scores.update');
+        // Announcements
+        Route::get('/announcements', [TeacherController::class, 'announcements'])
+            ->name('announcements.index');
 
-    // Grading Configuration
-    Route::put('/e-class-record/grading-configuration', [EClassRecordController::class, 'updateGradingConfiguration'])
-        ->name('e-class-record.grading-configuration.update');
+        // Messages
+        Route::get('/messages', [TeacherController::class, 'messages'])
+            ->name('messages.index');
 
-});
+        // DepEd Reports
+        Route::get('/deped-reports', function () {
+            return view('teacher.deped-reports');
+        })->name('deped-reports');
+
+        // Class Settings
+        Route::get('/class-settings', function () {
+            return view('teacher.class-settings');
+        })->name('class-settings');
+
+        /*
+        |--------------------------------------------------------------------------
+        | E-Class Record
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/e-class-record', [EClassRecordController::class, 'index'])
+            ->name('e-class-record');
+
+        // Assessment Activities
+        Route::post('/e-class-record/activities', [EClassRecordController::class, 'storeActivity'])
+            ->name('e-class-record.activities.store');
+
+        Route::put('/e-class-record/activities/{activity}', [EClassRecordController::class, 'updateActivity'])
+            ->name('e-class-record.activities.update');
+
+        Route::delete('/e-class-record/activities/{activity}', [EClassRecordController::class, 'destroyActivity'])
+            ->name('e-class-record.activities.destroy');
+
+        // Student Assessment Scores
+        Route::put('/e-class-record/activities/{activity}/students/{student}/score', [EClassRecordController::class, 'updateScore'])
+            ->name('e-class-record.scores.update');
+
+        // Grading Configuration
+        Route::put('/e-class-record/grading-configuration', [EClassRecordController::class, 'updateGradingConfiguration'])
+            ->name('e-class-record.grading-configuration.update');
+    });
 
 /*
 |--------------------------------------------------------------------------

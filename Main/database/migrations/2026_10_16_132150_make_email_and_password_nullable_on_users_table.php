@@ -9,10 +9,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('email')->nullable()->change();
-            $table->string('password')->nullable()->change();
-        });
+        if (Schema::hasColumn('users', 'email') && Schema::hasColumn('users', 'password')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('email')->nullable()->change();
+                $table->string('password')->nullable()->change();
+            });
+        }
     }
 
     public function down(): void
