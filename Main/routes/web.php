@@ -5,6 +5,7 @@
 use App\Http\Controllers\TeacherStudentController;
 use App\Http\Controllers\TeacherClassController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\Teacher\EClassRecordController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -68,12 +69,12 @@ Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(
     Route::get('/classes/{class}/students', [TeacherStudentController::class, 'index'])
         ->name('classes.students.index');
 
-     Route::get('/classes/{class}/students/archived', [TeacherStudentController::class, 'archived'])
+    Route::get('/classes/{class}/students/archived', [TeacherStudentController::class, 'archived'])
          ->name('classes.students.archived');
 
-        Route::get('/classes/{class}/students/{student}', [TeacherStudentController::class, 'show'])
+    Route::get('/classes/{class}/students/{student}', [TeacherStudentController::class, 'show'])
     ->name('classes.students.show');
-       
+         
     Route::get('/classes/{class}/students/{student}/edit', [TeacherStudentController::class, 'edit'])
     ->name('classes.students.edit');
 
@@ -86,10 +87,10 @@ Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(
     Route::post('/classes/{class}/students/{student}/restore', [TeacherStudentController::class, 'restore'])
     ->name('classes.students.restore');
 
-        Route::get('/classes/{class}/students/create', [TeacherStudentController::class, 'create'])
+    Route::get('/classes/{class}/students/create', [TeacherStudentController::class, 'create'])
     ->name('classes.students.create');
 
-     Route::post('/classes/{class}/students', [TeacherStudentController::class, 'store'])
+    Route::post('/classes/{class}/students', [TeacherStudentController::class, 'store'])
     ->name('classes.students.store');
 
     // New Teacher Sidebar Dashboard Routes
@@ -115,6 +116,28 @@ Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(
 
     Route::get('/messages', [TeacherController::class, 'messages'])
         ->name('messages.index');
+
+    // E-Class Record Routes
+    Route::get('/e-class-record', [EClassRecordController::class, 'index'])
+        ->name('e-class-record');
+
+    // Assessment Activities
+    Route::post('/e-class-record/activities', [EClassRecordController::class, 'storeActivity'])
+        ->name('e-class-record.activities.store');
+
+    Route::put('/e-class-record/activities/{activity}', [EClassRecordController::class, 'updateActivity'])
+        ->name('e-class-record.activities.update');
+
+    Route::delete('/e-class-record/activities/{activity}', [EClassRecordController::class, 'destroyActivity'])
+        ->name('e-class-record.activities.destroy');
+
+    // Student Assessment Scores
+    Route::put('/e-class-record/activities/{activity}/students/{student}/score', [EClassRecordController::class, 'updateScore'])
+        ->name('e-class-record.scores.update');
+
+    // Grading Configuration
+    Route::put('/e-class-record/grading-configuration', [EClassRecordController::class, 'updateGradingConfiguration'])
+        ->name('e-class-record.grading-configuration.update');
 });
 
 /*

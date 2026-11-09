@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             User::firstOrCreate(['lrn' => $st['lrn']], $st);
         }
 
-        // 2. Seed Default Teacher Account (Mrs. Sarah Miller)
+        // 2. Seed Default Teacher Accounts
         $teacher = Teacher::updateOrCreate(
             ['employee_id' => 'T-2026-001'],
             [
@@ -38,6 +38,17 @@ class DatabaseSeeder extends Seeder
                 'middle_name' => 'Elizabeth',
                 'last_name' => 'Miller',
                 'contact_number' => '+63 917 555 0192',
+                'password' => Hash::make('password123'),
+            ]
+        );
+
+        // Also seed EMP-2026-001 for compatibility
+        Teacher::updateOrCreate(
+            ['employee_id' => 'EMP-2026-001'],
+            [
+                'first_name' => 'Maria',
+                'middle_name' => 'Clara',
+                'last_name' => 'Santos',
                 'password' => Hash::make('password123'),
             ]
         );

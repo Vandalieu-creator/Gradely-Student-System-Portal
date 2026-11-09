@@ -52,4 +52,16 @@ class Teacher extends Authenticatable
     {
         return $this->hasMany(Grade::class, 'teacher_id');
     }
+
+    // A teacher can have multiple grading configurations.
+    public function gradingConfigurations(): HasMany
+    {
+        return $this->hasMany(GradingConfiguration::class, 'teacher_id');
+    }
+
+    // A teacher can create multiple assessment activities.
+    public function assessmentActivities(): HasMany
+    {
+        return $this->hasMany(AssessmentActivity::class, 'teacher_id');
+    }
 }

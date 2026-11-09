@@ -543,13 +543,13 @@
             </div>
 
             <!-- 8. GRADES & REPORTS (Accordion - Matching Reference Image Icon) -->
-            <div class="relative group" x-data="{ openMenu: {{ $active === 'grades' ? 'true' : 'false' }} }">
-                <div class="flex items-center rounded-xl transition duration-200 font-medium text-sm cursor-pointer {{ $active === 'grades' ? 'bg-[#1b2b42] text-white font-bold shadow-xs border border-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
+            <div class="relative group" x-data="{ openMenu: {{ in_array($active, ['grades', 'e-class-record']) ? 'true' : 'false' }} }">
+                <div class="flex items-center rounded-xl transition duration-200 font-medium text-sm cursor-pointer {{ in_array($active, ['grades', 'e-class-record']) ? 'bg-[#1b2b42] text-white font-bold shadow-xs border border-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
                      :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
                     
                     <a href="{{ route('teacher.grades.index') }}" class="flex items-center space-x-3.5 flex-1 min-w-0">
                         <!-- Circle checkmark & badge icon (matching reference image) -->
-                        <svg class="w-5 h-5 shrink-0 {{ $active === 'grades' ? 'text-teal-400' : 'text-slate-300 group-hover:text-white' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="w-5 h-5 shrink-0 {{ in_array($active, ['grades', 'e-class-record']) ? 'text-teal-400' : 'text-slate-300 group-hover:text-white' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="13" cy="13" r="7.5"/>
                             <path d="m10 13 2 2 4-4"/>
                             <circle cx="6" cy="6" r="3.2"/>
@@ -584,6 +584,11 @@
                     <a href="{{ route('teacher.grades.index') }}" class="block py-1.5 text-teal-300 hover:text-white font-medium transition">
                         📊 Class Gradebook
                     </a>
+                    @if(Route::has('teacher.e-class-record'))
+                        <a href="{{ route('teacher.e-class-record') }}" class="block py-1.5 text-sky-300 hover:text-white transition">
+                            📑 E-Class Record (DepEd)
+                        </a>
+                    @endif
                     <a href="{{ route('teacher.grades.index') }}#form138" class="block py-1.5 text-slate-300 hover:text-white transition">
                         📄 DepEd Form 138 Cards
                     </a>

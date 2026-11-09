@@ -229,7 +229,7 @@
                                 @forelse ($recentStudents as $student)
                                     <tr class="hover:bg-slate-50/80 transition">
                                         <td class="py-2.5 px-3 font-bold text-slate-900 flex items-center space-x-2">
-                                            <div class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 font-bold text-[10px] flex items-center justify-center">
+                                            <div class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center">
                                                 {{ substr($student->first_name, 0, 1) }}
                                             </div>
                                             <span>{{ $student->last_name }}, {{ $student->first_name }}</span>
