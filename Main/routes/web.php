@@ -2,8 +2,6 @@
 
 
 
-use App\Http\Controllers\TeacherStudentController;
-use App\Http\Controllers\TeacherClassController;
 use App\Http\Controllers\Teacher\EClassRecordController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -54,41 +52,30 @@ Route::middleware(['auth:teacher'])->prefix('teacher')->name('teacher.')->group(
         return view('teacher.dashboard');
     })->name('dashboard');
 
-    Route::get('/classes', [TeacherClassController::class, 'index'])
-        ->name('classes.index');
+    // My Students
+    Route::get('/my-students', function () {
+        return view('teacher.my-students');
+    })->name('my-students');
 
-    Route::get('/classes/create', [TeacherClassController::class, 'create'])
-        ->name('classes.create');
+    // Phil-IRI Reading
+    Route::get('/phil-iri-reading', function () {
+        return view('teacher.phil-iri-reading');
+    })->name('phil-iri-reading');
 
-    Route::post('/classes', [TeacherClassController::class, 'store'])
-        ->name('classes.store');
+    // Attendance
+    Route::get('/attendance', function () {
+        return view('teacher.attendance');
+    })->name('attendance');
 
-    Route::get('/classes/{class}/students', [TeacherStudentController::class, 'index'])
-        ->name('classes.students.index');
+    // DepEd Reports
+    Route::get('/deped-reports', function () {
+        return view('teacher.deped-reports');
+    })->name('deped-reports');
 
-    Route::get('/classes/{class}/students/archived', [TeacherStudentController::class, 'archived'])
-         ->name('classes.students.archived');
-
-    Route::get('/classes/{class}/students/{student}', [TeacherStudentController::class, 'show'])
-    ->name('classes.students.show');
-         
-    Route::get('/classes/{class}/students/{student}/edit', [TeacherStudentController::class, 'edit'])
-    ->name('classes.students.edit');
-
-    Route::put('/classes/{class}/students/{student}', [TeacherStudentController::class, 'update'])
-    ->name('classes.students.update');
-
-    Route::delete('/classes/{class}/students/{student}', [TeacherStudentController::class, 'destroy'])
-    ->name('classes.students.destroy');
-    
-    Route::post('/classes/{class}/students/{student}/restore', [TeacherStudentController::class, 'restore'])
-    ->name('classes.students.restore');
-
-    Route::get('/classes/{class}/students/create', [TeacherStudentController::class, 'create'])
-    ->name('classes.students.create');
-
-    Route::post('/classes/{class}/students', [TeacherStudentController::class, 'store'])
-    ->name('classes.students.store');
+    // Class Settings
+    Route::get('/class-settings', function () {
+        return view('teacher.class-settings');
+    })->name('class-settings');
 
     
     // E-Class Record Routes

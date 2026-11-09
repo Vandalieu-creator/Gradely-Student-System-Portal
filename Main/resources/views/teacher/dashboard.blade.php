@@ -367,7 +367,7 @@
                     <div class="space-y-4">
 
                         <!-- My Classes -->
-                        <a href="{{ route('teacher.classes.index') }}"
+                        <a href="{{ route('teacher.my-students') }}"
                            class="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-teal-300 hover:bg-teal-50">
 
                             <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
@@ -399,36 +399,7 @@
                         </a>
 
                         <!-- Create Class -->
-                        <a href="{{ route('teacher.classes.create') }}"
-                           class="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-sky-300 hover:bg-sky-50">
-
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     class="h-6 w-6"
-                                     fill="none"
-                                     viewBox="0 0 24 24"
-                                     stroke="currentColor"
-                                     stroke-width="1.8">
-                                    <path stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          d="M12 4v16m8-8H4"/>
-                                </svg>
-                            </div>
-
-                            <div class="min-w-0 flex-1">
-                                <h4 class="font-bold text-slate-900">
-                                    Create New Class
-                                </h4>
-
-                                <p class="mt-1 text-xs leading-5 text-slate-500">
-                                    Set up a new classroom
-                                </p>
-                            </div>
-
-                            <span class="text-xl text-slate-400 transition group-hover:translate-x-1 group-hover:text-sky-700">
-                                ›
-                            </span>
-                        </a>
+                        
 
                     </div>
 

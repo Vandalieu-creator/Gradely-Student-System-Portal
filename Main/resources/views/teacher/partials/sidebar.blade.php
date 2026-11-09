@@ -96,44 +96,68 @@
             </a>
 
             <!-- Phil-IRI Reading -->
-            <a href="#" title="Phil-IRI Reading"
-                class="group flex items-center rounded-xl px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition"
-                :class="sidebarCollapsed ? 'justify-center p-3' : ''">
-                <i class="fa-solid fa-book-open w-5 text-center shrink-0"></i>
-                <span x-show="!sidebarCollapsed" class="ml-3 tracking-wide">Phil-IRI Reading</span>
+            <a href="{{ route('teacher.phil-iri-reading') }}"
+                title="Phil-IRI Reading"
+                class="group flex items-center rounded-xl transition text-sm
+                {{ $active === 'phil-iri-reading' ? 'bg-[#1b2b42] text-white font-bold border border-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
+                :class="sidebarCollapsed ? 'justify-center p-3' : 'px-3 py-2.5'">
+
+                <i class="fa-solid fa-book-open w-5 text-center shrink-0 {{ $active === 'phil-iri-reading' ? 'text-sky-400' : '' }}"></i>
+
+                <span x-show="!sidebarCollapsed" class="ml-3 tracking-wide">
+                    Phil-IRI Reading
+                </span>
+
+                <span x-show="!sidebarCollapsed && '{{ $active }}' === 'phil-iri-reading'"
+                    class="ml-auto w-1.5 h-1.5 rounded-full bg-sky-400"></span>
             </a>
 
             <!-- Attendance -->
-            <a href="#" title="Attendance"
-                class="group flex items-center rounded-xl px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition"
-                :class="sidebarCollapsed ? 'justify-center p-3' : ''">
-                <i class="fa-regular fa-calendar-check w-5 text-center shrink-0"></i>
-                <span x-show="!sidebarCollapsed" class="ml-3 tracking-wide">Attendance</span>
-            </a>
+            <a href="{{ route('teacher.attendance') }}"
+                    title="Attendance"
+                    class="group flex items-center rounded-xl transition text-sm
+                    {{ $active === 'attendance' ? 'bg-[#1b2b42] text-white font-bold border border-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
+                    :class="sidebarCollapsed ? 'justify-center p-3' : 'px-3 py-2.5'">
+                    <i class="fa-regular fa-calendar-check w-5 text-center shrink-0 {{ $active === 'attendance' ? 'text-sky-400' : '' }}"></i>
+                    <span x-show="!sidebarCollapsed" class="ml-3 tracking-wide">Attendance</span>
+                    <span x-show="!sidebarCollapsed && '{{ $active }}' === 'attendance'"
+                        class="ml-auto w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+                </a>
 
             <!-- My Students -->
-            <a href="{{ route('teacher.classes.index') }}" title="My Students"
-                class="group flex items-center rounded-xl px-3 py-2.5 text-sm
-                {{ $active === 'students' ? 'bg-[#1b2b42] text-white font-bold border border-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
-                :class="sidebarCollapsed ? 'justify-center p-3' : ''">
-                <i class="fa-solid fa-users w-5 text-center shrink-0"></i>
+            <a href="{{ route('teacher.my-students') }}"
+                title="My Students"
+                class="group flex items-center rounded-xl transition text-sm
+                {{ $active === 'my-students' ? 'bg-[#1b2b42] text-white font-bold border border-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
+                :class="sidebarCollapsed ? 'justify-center p-3' : 'px-3 py-2.5'">
+                <i class="fa-solid fa-users w-5 text-center shrink-0 {{ $active === 'my-students' ? 'text-sky-400' : '' }}"></i>
                 <span x-show="!sidebarCollapsed" class="ml-3 tracking-wide">My Students</span>
+                <span x-show="!sidebarCollapsed && '{{ $active }}' === 'my-students'"
+                    class="ml-auto w-1.5 h-1.5 rounded-full bg-sky-400"></span>
             </a>
 
             <!-- DepEd Reports -->
-            <a href="#" title="DepEd Reports"
-                class="group flex items-center rounded-xl px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition"
-                :class="sidebarCollapsed ? 'justify-center p-3' : ''">
-                <i class="fa-solid fa-chart-column w-5 text-center shrink-0"></i>
+            <a href="{{ route('teacher.deped-reports') }}"
+                title="DepEd Reports"
+                class="group flex items-center rounded-xl transition text-sm
+                {{ $active === 'deped-reports' ? 'bg-[#1b2b42] text-white font-bold border border-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
+                :class="sidebarCollapsed ? 'justify-center p-3' : 'px-3 py-2.5'">
+                <i class="fa-solid fa-chart-column w-5 text-center shrink-0 {{ $active === 'deped-reports' ? 'text-sky-400' : '' }}"></i>
                 <span x-show="!sidebarCollapsed" class="ml-3 tracking-wide">DepEd Reports</span>
+                <span x-show="!sidebarCollapsed && '{{ $active }}' === 'deped-reports'"
+                    class="ml-auto w-1.5 h-1.5 rounded-full bg-sky-400"></span>
             </a>
 
             <!-- Class Settings -->
-            <a href="#" title="Class Settings"
-                class="group flex items-center rounded-xl px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition"
-                :class="sidebarCollapsed ? 'justify-center p-3' : ''">
-                <i class="fa-solid fa-gear w-5 text-center shrink-0"></i>
+            <a href="{{ route('teacher.class-settings') }}"
+                title="Class Settings"
+                class="group flex items-center rounded-xl transition text-sm
+                {{ $active === 'class-settings' ? 'bg-[#1b2b42] text-white font-bold border border-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
+                :class="sidebarCollapsed ? 'justify-center p-3' : 'px-3 py-2.5'">
+                <i class="fa-solid fa-gear w-5 text-center shrink-0 {{ $active === 'class-settings' ? 'text-sky-400' : '' }}"></i>
                 <span x-show="!sidebarCollapsed" class="ml-3 tracking-wide">Class Settings</span>
+                <span x-show="!sidebarCollapsed && '{{ $active }}' === 'class-settings'"
+                    class="ml-auto w-1.5 h-1.5 rounded-full bg-sky-400"></span>
             </a>
 
         </nav>
