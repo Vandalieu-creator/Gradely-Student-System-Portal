@@ -5,6 +5,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Teacher\EClassRecordController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Teacher\ClassSettingsController;
+use App\Http\Controllers\Teacher\StudentController;
+use App\Http\Controllers\Teacher\MessageController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -56,9 +59,58 @@ Route::middleware(['auth:teacher'])
         Route::get('/dashboard', [TeacherController::class, 'dashboard'])
             ->name('dashboard');
 
-        // My Students - new implementation
+        // My Students - teammate's design with database integration
         Route::get('/my-students', function () {
-            return view('teacher.my-students');
+
+            $teacher = auth('teacher')->user();
+
+            abort_unless($teacher, 403);
+
+            // Get only this teacher's classes
+            $classes = $teacher->classes()
+                ->withCount('students')
+                ->orderBy('class_name')
+                ->get();
+
+            // Search and class filter values
+            $search = trim(request('search', ''));
+            $classFilter = request('class', '');
+
+            // Get students belonging to this teacher's classes
+            $students = \App\Models\Student::query()
+                ->with('schoolClass')
+                ->whereIn('class_id', $classes->pluck('id'))
+
+                // Filter by selected class
+                ->when($classFilter, function ($query) use ($classFilter, $classes) {
+                    $classIds = $classes
+                        ->where('class_name', $classFilter)
+                        ->pluck('id');
+
+                    $query->whereIn('class_id', $classIds);
+                })
+
+                // Search by student name or LRN
+                ->when($search, function ($query) use ($search) {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('middle_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('lrn', 'like', "%{$search}%");
+                    });
+                })
+
+                ->orderBy('last_name')
+                ->orderBy('first_name')
+                ->get();
+
+            return view('teacher.students.all', compact(
+                'students',
+                'classes',
+                'search',
+                'classFilter'
+            ));
+
         })->name('my-students');
 
         // Phil-IRI Reading
@@ -97,15 +149,24 @@ Route::middleware(['auth:teacher'])
         Route::get('/messages', [TeacherController::class, 'messages'])
             ->name('messages.index');
 
+        Route::post('/messages', [MessageController::class, 'store'])
+            ->name('messages.store');
+
         // DepEd Reports
         Route::get('/deped-reports', function () {
             return view('teacher.deped-reports');
         })->name('deped-reports');
 
         // Class Settings
-        Route::get('/class-settings', function () {
-            return view('teacher.class-settings');
-        })->name('class-settings');
+        Route::get('/class-settings', [ClassSettingsController::class, 'index'])
+            ->name('class-settings');
+            
+        Route::post('/class-settings', [ClassSettingsController::class, 'store'])
+            ->name('class-settings.store');
+
+        // Student Enrollment
+        Route::post('/my-students', [StudentController::class, 'store'])
+            ->name('students.store');
 
         /*
         |--------------------------------------------------------------------------

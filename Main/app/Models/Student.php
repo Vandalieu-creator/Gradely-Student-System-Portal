@@ -50,4 +50,12 @@ class Student extends Model
     {
         return $this->hasMany(StudentAssessmentScore::class, 'student_id');
     }
+
+    /**
+     * A student can have multiple messages.
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'student_id');
+    }
 }

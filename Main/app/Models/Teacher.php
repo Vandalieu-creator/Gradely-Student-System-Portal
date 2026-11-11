@@ -64,4 +64,12 @@ class Teacher extends Authenticatable
     {
         return $this->hasMany(AssessmentActivity::class, 'teacher_id');
     }
+
+    /**
+     * A teacher can have multiple messages.
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'teacher_id');
+    }
 }

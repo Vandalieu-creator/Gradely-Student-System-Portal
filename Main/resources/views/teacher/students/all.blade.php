@@ -1,5 +1,23 @@
 <x-teacher-layout active="students" title="My Students Directory">
 
+<div
+    x-data="{
+        activeModalStudent: null,
+        showAddStudentModal: false,
+        showStudentDetailModal: false,
+        studentRecipients: @js($students->map(fn ($student) => [
+            'lrn' => $student->lrn,
+            'name' => trim($student->first_name . ' ' . ($student->middle_name ?? '') . ' ' . $student->last_name),
+            'class' => $student->schoolClass->class_name ?? 'No class assigned',
+        ])->values()),
+
+        openStudent(st) {
+            this.activeModalStudent = st;
+            this.showStudentDetailModal = true;
+        }
+    }"
+>
+
     <!-- Top Navigation Header -->
     <header class="bg-white border-b border-slate-200/80 sticky top-0 z-20 px-6 py-4">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 max-w-7xl mx-auto">
@@ -22,13 +40,17 @@
                 </div>
             </div>
 
+            
             <!-- Header Quick Actions -->
-            <div class="flex items-center space-x-2">
-                <a href="{{ route('teacher.classes.index') }}" 
-                   class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs">
+            <div class="flex items-center space-x-2 flex-wrap">
+                <a href="{{ route('teacher.class-settings') }}"
+                class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs">
                     Manage Classes
                 </a>
-                <button type="button" 
+
+                
+
+                <button type="button"
                         @click="showMessageModal = true"
                         class="px-4 py-2.5 rounded-xl bg-[#00adef] hover:bg-[#009fdc] text-white text-xs font-bold shadow-xs transition cursor-pointer">
                     <i class="fa-solid fa-paper-plane mr-1 text-[11px]"></i> Message Student
@@ -37,22 +59,14 @@
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6"
-         x-data="{
-             activeModalStudent: null,
-             showStudentDetailModal: false,
-             openStudent(st) {
-                 this.activeModalStudent = st;
-                 this.showStudentDetailModal = true;
-             }
-         }">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
         <!-- Filters & Search Toolbar -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-xs space-y-4">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 
                 <!-- Search Form -->
-                <form method="GET" action="{{ route('teacher.students.all') }}" class="flex-1 max-w-md relative">
+                <form method="GET" action="{{ route('teacher.my-students') }}" class="flex-1 max-w-md relative">
                     @if(request('class'))
                         <input type="hidden" name="class" value="{{ request('class') }}">
                     @endif
@@ -66,12 +80,12 @@
 
                 <!-- Class Filter Pills -->
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <a href="{{ route('teacher.students.all') }}" 
+                    <a href="{{ route('teacher.my-students') }}" 
                        class="px-3 py-1.5 rounded-xl text-xs font-bold transition {{ !$classFilter ? 'bg-[#172554] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         All Classes ({{ $classes->sum('students_count') }})
                     </a>
                     @foreach($classes as $c)
-                        <a href="{{ route('teacher.students.all') }}?class={{ urlencode($c->class_name) }}" 
+                        <a href="{{ route('teacher.my-students') }}?class={{ urlencode($c->class_name) }}" 
                            class="px-3 py-1.5 rounded-xl text-xs font-bold transition {{ $classFilter === $c->class_name ? 'bg-[#00adef] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                             {{ $c->class_name }}
                         </a>
@@ -89,7 +103,7 @@
                     <span>Females: <strong class="text-slate-800">{{ $students->where('gender', 'Female')->count() }}</strong></span>
                 </div>
                 @if($search || $classFilter)
-                    <a href="{{ route('teacher.students.all') }}" class="text-sky-600 font-bold hover:underline">
+                    <a href="{{ route('teacher.my-students') }}" class="text-sky-600 font-bold hover:underline">
                         Reset Filters ✕
                     </a>
                 @endif
@@ -124,11 +138,11 @@
                         <div class="mt-4 p-3 rounded-2xl bg-slate-50 space-y-1.5 text-xs">
                             <div class="flex justify-between">
                                 <span class="text-slate-400 font-medium">Class Section:</span>
-                                <span class="font-bold text-slate-800">{{ $student->schoolClass->class_name ?? 'Grade 4 - Diamond' }}</span>
+                                <span class="font-bold text-slate-800">{{ $student->schoolClass->class_name ?? 'No class assigned' }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-slate-400 font-medium">Birth Date:</span>
-                                <span class="font-semibold text-slate-700">{{ $student->date_of_birth ? date('M d, Y', strtotime($student->date_of_birth)) : 'Apr 12, 2015' }}</span>
+                                <span class="font-semibold text-slate-700">{{ $student->date_of_birth ? \Carbon\Carbon::parse($student->date_of_birth)->format('M d, Y') : 'Not provided' }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-slate-400 font-medium">Academic Status:</span>
@@ -140,24 +154,34 @@
                     <!-- Actions -->
                     <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
                         <button type="button" 
-                                @click="openStudent({
-                                    name: '{{ $student->first_name }} {{ $student->last_name }}',
-                                    lrn: '{{ $student->lrn }}',
-                                    class: '{{ $student->schoolClass->class_name ?? 'Grade 4 - Diamond' }}',
-                                    gender: '{{ $student->gender ?? 'Male' }}',
-                                    address: '{{ $student->address ?? 'Ginatilan, Cebu' }}',
-                                    dob: '{{ $student->date_of_birth ?? '2015-04-12' }}'
-                                })"
+                                @click="openStudent(@js([
+                                    'name' => trim($student->first_name . ' ' . ($student->middle_name ?? '') . ' ' . $student->last_name),
+                                    'lrn' => $student->lrn,
+                                    'class' => $student->schoolClass->class_name ?? 'No class assigned',
+                                    'gender' => $student->gender ?? 'Not provided',
+                                    'address' => $student->address ?? 'Not provided',
+                                    'dob' => $student->date_of_birth
+                                        ? \Carbon\Carbon::parse($student->date_of_birth)->format('F d, Y')
+                                        : 'Not provided'
+                                ]))"
+
                                 class="text-xs font-bold text-slate-600 hover:text-sky-600 transition flex items-center space-x-1 cursor-pointer">
                             <i class="fa-solid fa-address-card text-xs"></i>
                             <span>View Profile</span>
                         </button>
 
-                        <button type="button" 
-                                @click="showMessageModal = true"
-                                class="px-3.5 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 text-xs font-bold transition cursor-pointer">
+                        
+                        <button
+                            type="button"
+                            @click="$dispatch('open-message', {
+                                lrn: @js($student->lrn),
+                                students: studentRecipients
+                            })"
+                            class="px-3.5 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 text-xs font-bold transition cursor-pointer"
+                        >
                             <i class="fa-solid fa-comment-dots text-xs mr-1"></i> Message
                         </button>
+
                     </div>
 
                 </div>
@@ -168,7 +192,11 @@
             @endforelse
         </div>
 
+        
+
         <!-- Student Profile Modal -->
+        <template x-teleport="body">
+
         <div x-show="showStudentDetailModal" 
              x-transition.opacity 
              @keydown.window.escape="showStudentDetailModal = false"
@@ -203,13 +231,9 @@
                         <span class="text-slate-500">Date of Birth:</span>
                         <span class="font-semibold text-slate-800" x-text="activeModalStudent ? activeModalStudent.dob : ''"></span>
                     </div>
-                    <div class="flex justify-between py-1 border-b border-slate-200/60">
-                        <span class="text-slate-500">Home Address:</span>
-                        <span class="font-semibold text-slate-800 truncate max-w-[180px]" x-text="activeModalStudent ? activeModalStudent.address : ''"></span>
-                    </div>
                     <div class="flex justify-between py-1">
                         <span class="text-slate-500">Average Attendance:</span>
-                        <span class="font-bold text-emerald-600">98.2% (Present)</span>
+                        <span class="font-semibold text-slate-500">No attendance data</span>
                     </div>
                 </div>
 
@@ -223,8 +247,10 @@
                 </div>
             </div>
         </div>
+        </template>
 
     </div>
+</div>
 
 </x-teacher-layout>
 

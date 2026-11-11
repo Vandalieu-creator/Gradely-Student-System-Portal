@@ -210,14 +210,25 @@
 
             
 
-            <!-- 3. MY STUDENTS (Accordion) -->
-            <div class="relative group" x-data="{ openMenu: {{ $active === 'students' ? 'true' : 'false' }} }">
-                <div class="flex items-center rounded-xl transition duration-200 font-medium text-sm cursor-pointer {{ $active === 'students' ? 'bg-[#1b2b42] text-white font-bold shadow-xs border border-white/10' : 'text-slate-300 hover:text-white hover:bg-white/5' }}"
-                     :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
-                    
-                    <a href="{{ route('teacher.my-students') }}" class="flex items-center space-x-3.5 flex-1 min-w-0">
+            
+                <!-- 3. MY STUDENTS -->
+                <div class="relative group">
+                    <a href="{{ route('teacher.my-students') }}"
+                    class="flex items-center rounded-xl transition duration-200 font-medium text-sm
+                    {{ $active === 'students'
+                            ? 'bg-[#1b2b42] text-white font-bold shadow-xs border border-white/10'
+                            : 'text-slate-300 hover:text-white hover:bg-white/5' }}
+                    {{ $active === 'students' ? '' : '' }}"
+                    :class="sidebarCollapsed ? 'justify-center p-3' : 'px-3 py-2.5'">
+
                         <!-- Group of Users Outline Icon -->
-                        <svg class="w-5 h-5 shrink-0 {{ $active === 'students' ? 'text-sky-400' : 'text-slate-300 group-hover:text-white' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="w-5 h-5 shrink-0 {{ $active === 'students' ? 'text-sky-400' : 'text-slate-300 group-hover:text-white' }}"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -225,47 +236,20 @@
                         </svg>
 
                         <!-- Label -->
-                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap tracking-wide">My Students</span>
+                        <span x-show="!sidebarCollapsed"
+                            class="whitespace-nowrap tracking-wide ml-3.5">
+                            My Students
+                        </span>
                     </a>
 
-                    <!-- Downward Small Caret (▼) toggle -->
-                    <button type="button" 
-                            x-show="!sidebarCollapsed" 
-                            @click.stop="openMenu = !openMenu" 
-                            class="p-1 rounded hover:bg-white/10 transition">
-                        <svg class="w-2.5 h-2.5 text-slate-400 group-hover:text-slate-200 transition-transform duration-200" 
-                             :class="openMenu ? 'rotate-180 text-white' : ''" 
-                             viewBox="0 0 10 6" fill="currentColor">
-                            <path d="M0 0l5 6 5-6z"/>
-                        </svg>
-                    </button>
+                    <!-- Tooltip when Collapsed -->
+                    <div x-show="sidebarCollapsed"
+                        class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
+                        <span>My Students</span>
+                        <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#0d1624] border-l border-b border-slate-700 transform rotate-45"></div>
+                    </div>
                 </div>
 
-                <!-- Submenu when Expanded -->
-                <div x-show="!sidebarCollapsed && openMenu" 
-                     x-transition:enter="transition ease-out duration-150"
-                     x-transition:enter-start="opacity-0 -translate-y-1"
-                     x-transition:enter-end="opacity-100 translate-y-0"
-                     class="pl-11 pr-2 py-1 space-y-1 text-xs" 
-                     style="display: none;">
-                    <a href="{{ route('teacher.my-students') }}" class="block py-1.5 text-slate-300 hover:text-white transition">
-                        👥 Student Directory
-                    </a>
-                    <a href="{{ route('teacher.my-students') }}?class=Grade+4+-+Diamond" class="block py-1.5 text-slate-300 hover:text-white transition">
-                        💎 Grade 4 - Diamond
-                    </a>
-                    <a href="{{ route('teacher.my-students') }}?class=Grade+5+-+Sapphire" class="block py-1.5 text-slate-300 hover:text-white transition">
-                        🔷 Grade 5 - Sapphire
-                    </a>
-                </div>
-
-                <!-- Tooltip when Collapsed -->
-                <div x-show="sidebarCollapsed" 
-                     class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
-                    <span>My Students</span>
-                    <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#0d1624] border-l border-b border-slate-700 transform rotate-45"></div>
-                </div>
-            </div>
 
             <!-- CLASS SETTINGS -->
             <div class="relative group">
@@ -274,13 +258,10 @@
                     :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
 
                     <div class="flex items-center space-x-3.5">
+                        <span class="w-5 h-5 shrink-0 flex items-center justify-center">
+                            <i class="fa-solid fa-gear text-base {{ $active === 'class-settings' ? 'text-sky-400' : 'text-slate-300 group-hover:text-white' }}"></i>
+                        </span>
                         <!-- Settings Gear Icon -->
-                        <svg class="w-5 h-5 shrink-0 {{ $active === 'class-settings' ? 'text-sky-400' : 'text-slate-300 group-hover:text-white' }}"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.6 2.77-.08-.02a1.65 1.65 0 0 0-1.8.55l-.05.07h-3.2l-.05-.07a1.65 1.65 0 0 0-1.8-.55l-.08.02-1.6-2.77.06-.06A1.65 1.65 0 0 0 9.4 15l-.08-.04v-3.2l.08-.04a1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.6-2.77.08.02a1.65 1.65 0 0 0 1.8-.55l.05-.07h3.2l.05.07a1.65 1.65 0 0 0 1.8.55l.08-.02 1.6 2.77-.06.06A1.65 1.65 0 0 0 19.4 12l.08.04v3.2z"/>
-                        </svg>
 
                         <!-- Label -->
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap tracking-wide">Class Settings</span>

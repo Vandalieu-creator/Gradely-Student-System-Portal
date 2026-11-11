@@ -349,15 +349,25 @@
 <!-- ============================================================== -->
 <!-- 4. COMPOSE MESSAGE MODAL                                       -->
 <!-- ============================================================== -->
-<div x-show="showMessageModal" 
+<div x-show="showMessageModal"
+     @open-message.window="
+         studentRecipients = $event.detail.students || [];
+         msgRecipient = $event.detail.lrn || '';
+         showMessageModal = true;
+     "
+     
      x-transition.opacity 
      @keydown.window.escape="showMessageModal = false"
      class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 select-none" 
      style="display: none;"
      x-data="{
-         msgRecipient: 'Jm Marvie Brizuela (Student)',
+         msgRecipient: '',
          msgTopic: 'Homework Feedback',
          msgText: '',
+         studentRecipients: [],
+
+         recipientDropdownOpen: false,
+         recipientSearch: '',
          sendNewMessage() {
              if (!this.msgText.trim()) return;
              this.showMessageModal = false;
@@ -386,17 +396,118 @@
         </div>
 
         <!-- Form Body -->
-        <form @submit.prevent="sendNewMessage()" class="space-y-3.5">
+        <form method="POST"
+              action="{{ route('teacher.messages.store') }}"
+              class="space-y-3.5">
+            @csrf
+            <input type="hidden" name="lrn" :value="msgRecipient">
+
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Recipient *</label>
-                <select x-model="msgRecipient" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium bg-white">
-                    <option value="Jm Marvie Brizuela (Student)">Jm Marvie Brizuela (Grade 4 - Diamond)</option>
-                    <option value="Mr. & Mrs. Brizuela (Guardians)">Mr. & Mrs. Brizuela (Guardians of Jm Marvie)</option>
-                    <option value="Eduard Licatan (Student)">Eduard Licatan (Grade 4 - Diamond)</option>
-                    <option value="Clint John Orbillo (Student)">Clint John Orbillo (Grade 4 - Diamond)</option>
-                    <option value="Charles Cabrera (Student)">Charles Cabrera (Grade 4 - Diamond)</option>
-                    <option value="Sophia Marie Alcantara (Student)">Sophia Marie Alcantara (Grade 4 - Diamond)</option>
-                </select>
+                
+                
+                
+                <div class="relative" @click.outside="recipientDropdownOpen = false">
+
+                    <!-- Dropdown Trigger -->
+                    <button
+                        type="button"
+                        @click="recipientDropdownOpen = !recipientDropdownOpen; recipientSearch = ''"
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm hover:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition"
+                    >
+                        <span
+                            class="font-medium text-slate-700 truncate"
+                            x-text="studentRecipients.find(s => s.lrn === msgRecipient)?.name || 'Select a student'"
+                        ></span>
+
+                    <i
+                        class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200"
+                        :class="recipientDropdownOpen ? 'rotate-180' : ''"
+                    ></i>
+                    </button>
+
+                    <!-- Animated Dropdown -->
+                    <div
+                        x-show="recipientDropdownOpen"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 -translate-y-2"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 -translate-y-2"
+                        x-cloak
+                        class="absolute left-0 right-0 top-full mt-2 z-50 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden"
+                    >
+
+                        <!-- Search -->
+                        <div class="p-3 border-b border-slate-100">
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+
+                                <input
+                                    type="text"
+                                    x-model="recipientSearch"
+                                    placeholder="Search student name or LRN..."
+                                    class="w-full pl-9 pr-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Student Options -->
+                        <div class="max-h-52 overflow-y-auto p-1.5">
+
+                        <template
+                            x-for="student in studentRecipients.filter(s =>
+                                (s.name + ' ' + s.lrn + ' ' + s.class)
+                                .toLowerCase()
+                                .includes(recipientSearch.toLowerCase())
+                            )"
+                            :key="student.lrn"
+                        >
+                            <button
+                                type="button"
+                                @click="msgRecipient = student.lrn; recipientDropdownOpen = false; recipientSearch = ''"
+                                class="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-left hover:bg-sky-50 transition"
+                                :class="msgRecipient === student.lrn ? 'bg-sky-50' : ''"
+                            >
+                                <div class="min-w-0">
+                                    <p
+                                        class="text-xs font-bold text-slate-800 truncate"
+                                        x-text="student.name"
+                                    ></p>
+
+                                    <p
+                                        class="text-[10px] text-slate-400 mt-0.5"
+                                        x-text="student.class + ' · LRN: ' + student.lrn"
+                                    ></p>
+                                </div>
+
+                                <i
+                                    x-show="msgRecipient === student.lrn"
+                                    class="fa-solid fa-check text-sky-600 text-xs"
+                                ></i>
+                            </button>
+                        </template>
+
+                        <!-- Empty Search Result -->
+                        <div
+                            x-show="studentRecipients.filter(s =>
+                                (s.name + ' ' + s.lrn + ' ' + s.class)
+                                .toLowerCase()
+                                .includes(recipientSearch.toLowerCase())
+                            ).length === 0"
+                            class="py-6 text-center"
+                        >
+                            <i class="fa-solid fa-user-slash text-slate-300 text-xl"></i>
+                            <p class="text-xs text-slate-400 mt-2">No students found.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
             </div>
 
             <div>
@@ -409,7 +520,8 @@
 
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Message Content *</label>
-                <textarea x-model="msgText" 
+                <textarea name="body"
+                          x-model="msgText" 
                           rows="4" 
                           required 
                           placeholder="Type your message to the student or parent..." 
@@ -435,8 +547,10 @@
                         class="px-4 py-2.5 rounded-xl font-bold text-xs text-slate-500 hover:bg-slate-100 transition cursor-pointer">
                     Cancel
                 </button>
-                <button type="submit" 
-                        class="px-5 py-2.5 rounded-xl font-bold text-xs bg-[#172554] hover:bg-[#1e3a8a] text-white shadow-md transition flex items-center space-x-1.5 cursor-pointer">
+                <button type="submit"
+                        :disabled="!msgRecipient || !msgText.trim()"
+                        :class="(!msgRecipient || !msgText.trim()) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#1e3a8a] cursor-pointer'"
+                        class="px-5 py-2.5 rounded-xl font-bold text-xs bg-[#172554] text-white shadow-md transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-paper-plane text-xs"></i>
                     <span>Send Message</span>
                 </button>

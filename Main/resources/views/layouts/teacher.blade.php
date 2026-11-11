@@ -90,6 +90,9 @@
 
     <!-- Teacher Global Action Modals & Toast -->
     @include('teacher.partials.modals')
+    @if (session('success'))
+        <div x-init="notify(@js(session('success')), 'Success!')"></div>
+    @endif
 
     <!-- Layout Wrapper with Teacher Sidebar -->
     <div class="min-h-screen flex flex-row relative">
