@@ -80,6 +80,18 @@
                     </div>
 
                     <div class="space-y-1">
+
+                        <!-- My Profile -->
+                        <a href="{{ route('student.profile.edit') }}"
+                           class="flex items-center justify-between p-2 rounded-xl hover:bg-white/10 transition text-slate-200">
+
+                            <span class="flex items-center space-x-2">
+                                <i class="fa-solid fa-user-circle text-cyan-400 text-xs"></i>
+                                <span>My Profile</span>
+                            </span>
+
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+                        </a>
                         <a href="{{ route('student.dashboard') }}" class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white/10 transition text-slate-200">
                             <i class="fa-solid fa-house text-sky-400 text-xs"></i>
                             <span>My Dashboard</span>

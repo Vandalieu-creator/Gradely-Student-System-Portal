@@ -112,6 +112,33 @@
 
         <!-- Main Content Column -->
         <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+            <!-- Initial Password Reminder -->
+            @if(auth()->user()->role === 'student' && auth()->user()->password_changed_at === null)
+                <div class="mx-4 mt-5 sm:mx-6 lg:mx-8 p-4 sm:p-5 bg-amber-50 border border-amber-200 rounded-2xl shadow-sm">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 shrink-0 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                            <i class="fa-solid fa-shield-halved text-lg"></i>
+                        </div>
+
+                        <div class="flex-1">
+                            <h3 class="font-bold text-amber-800">
+                                Account Security Reminder
+                            </h3>
+
+                            <p class="text-sm text-amber-700 mt-1">
+                                You're still using your initial password. For your security,
+                                we recommend changing it to a password known only to you.
+                            </p>
+
+                            <a href="{{ route('student.profile.edit') }}"
+                                class="inline-flex items-center gap-2 mt-3 text-sm font-bold text-amber-800 hover:text-amber-950 transition">
+                                 Go to My Profile
+                                 <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
             
             <!-- Mobile Header Bar (< md) -->
             <div class="md:hidden flex items-center justify-between px-4 py-3 bg-[#101a2a] text-white shadow-md sticky top-0 z-30 border-b border-white/10">

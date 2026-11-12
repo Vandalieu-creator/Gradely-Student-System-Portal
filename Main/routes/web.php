@@ -228,6 +228,17 @@ Route::middleware(['auth', 'verified', 'role:student'])
         Route::get('/grades', function () {
             return view('student.grades');
         })->name('grades');
+
+        // Student Profile
+        Route::get('/profile', [\App\Http\Controllers\Student\ProfileController::class, 'edit'])
+            ->name('profile.edit');
+
+        Route::put('/profile', [\App\Http\Controllers\Student\ProfileController::class, 'update'])
+            ->name('profile.update');
+
+        // Change Password
+        Route::put('/profile/password', [\App\Http\Controllers\Student\ProfileController::class, 'updatePassword'])
+            ->name('profile.password');
     });
 
 /*

@@ -20,27 +20,33 @@ class AuthenticatedSessionController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        // 1. STUDENT LOGIN -> Queries 'users' table by LRN
+        // 1. STUDENT LOGIN -> LRN and Password
         if ($request->input('login_type') === 'student' || $request->filled('lrn')) {
             $request->validate([
-                'lrn' => ['required', 'string'],
+                'lrn' => ['required', 'digits:12'],
+                'password' => ['required', 'string'],
             ], [
                 'lrn.required' => 'Please enter your 12-digit LRN.',
+                'lrn.digits' => 'Your LRN must contain exactly 12 digits.',
+                'password.required' => 'Please enter your password.',
             ]);
 
-            $user = User::where('lrn', $request->lrn)->first();
+            $user = User::where('lrn', $request->lrn)
+                ->where('role', 'student')
+                ->first();
 
-            if (! $user) {
+            if (! $user || ! Hash::check($request->password, $user->password)) {
                 return back()->withErrors([
-                    'lrn' => 'No student found with this LRN.',
+                    'lrn' => 'Invalid LRN or password.',
                 ])->onlyInput('lrn');
             }
 
-            Auth::login($user, false);
+            Auth::guard('web')->login($user, false);
             $request->session()->regenerate();
 
             return redirect()->route('student.dashboard');
         }
+
 
         // 2. TEACHER LOGIN -> Queries 'teachers' table by employee_id directly
         if ($request->input('login_type') === 'teacher' || $request->filled('employee_id')) {

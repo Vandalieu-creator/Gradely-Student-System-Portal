@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
@@ -28,6 +28,8 @@ class StudentController extends Controller
                 'unique:students,lrn',
                 'unique:users,lrn',
             ],
+
+            'password' => ['required', 'string', 'min:8'],
 
             'date_of_birth' => ['nullable', 'date', 'before_or_equal:today'],
             'gender' => ['nullable', 'string', 'max:255'],
@@ -59,11 +61,12 @@ class StudentController extends Controller
                 $validated['last_name']
             );
 
-            \App\Models\User::create([
+            User::create([
                 'name' => $fullName,
                 'lrn' => $validated['lrn'],
                 'role' => 'student',
-                'password' => Str::random(40),
+                'password' => $validated['password'],
+                'password_changed_at' => null,
             ]);
         });
 

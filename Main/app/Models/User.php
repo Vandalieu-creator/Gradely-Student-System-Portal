@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'username', 'email', 'lrn', 'password', 'role'])]
+#[Fillable(['name', 'username', 'email', 'lrn', 'password', 'role', 'password_changed_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -22,6 +22,11 @@ class User extends Authenticatable
     public function teacher(): HasOne
     {
         return $this->hasOne(Teacher::class);
+    }
+
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class, 'lrn', 'lrn');
     }
 
     /**

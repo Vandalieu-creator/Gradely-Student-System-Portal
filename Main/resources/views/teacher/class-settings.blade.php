@@ -409,7 +409,35 @@
                             </p>
                             </div>
 
-                            !-- Date of Birth and Gender -->
+
+                            <!-- Temporary Password -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-2">
+                                    Temporary Password <span class="text-red-500">*</span>
+                                </label>
+
+                                <input
+                                    type="password"
+                                    name="password"
+                                    required
+                                    minlength="8"
+                                    autocomplete="new-password"
+                                    class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-500 focus:ring-sky-500"
+                                    placeholder="Create a temporary password"
+                                >
+
+                                <p class="text-xs text-slate-400 mt-1">
+                                    At least 8 characters. Give this password to the student.
+                                </p>
+
+                                @error('password')
+                                    <p class="text-xs text-red-500 mt-1">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- Date of Birth and Gender -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 mb-2">
