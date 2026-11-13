@@ -238,7 +238,7 @@
                                         <td class="py-2.5 px-3">{{ $student->gender ?? '—' }}</td>
                                         <td class="py-2.5 px-3">
                                             <span class="px-2 py-0.5 rounded-full bg-slate-100 font-semibold text-slate-700 text-[10px]">
-                                                Grade 4 - Diamond
+                                                Grade 1 - Section A
                                             </span>
                                         </td>
                                         <td class="py-2.5 px-3 text-right">
