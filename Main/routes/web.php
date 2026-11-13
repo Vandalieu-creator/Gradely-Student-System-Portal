@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Http\Controllers\ProfileController;
@@ -64,7 +63,7 @@ Route::middleware(['auth:teacher'])
 
             $teacher = auth('teacher')->user();
 
-            abort_unless($teacher, 403);
+            abort_unless((bool) $teacher, 403);
 
             // Get only this teacher's classes
             $classes = $teacher->classes()
@@ -152,6 +151,34 @@ Route::middleware(['auth:teacher'])
         Route::post('/messages', [MessageController::class, 'store'])
             ->name('messages.store');
 
+        Route::post('/messages/send', function (\Illuminate\Http\Request $request) {
+            try {
+                $request->validate([
+                    'student_user_id' => 'required',
+                    'message' => 'required|string|max:1000',
+                ]);
+
+                $studentUser = \App\Models\User::find($request->student_user_id);
+                $studentRecord = \App\Models\Student::where('lrn', $studentUser?->lrn ?? '')->first();
+
+                $msg = \App\Models\TeacherMessage::create([
+                    'student_id' => $studentRecord?->id ?? $request->student_user_id,
+                    'student_user_id' => $request->student_user_id,
+                    'teacher_id' => auth('teacher')->id(),
+                    'sender' => 'teacher',
+                    'message' => $request->message,
+                    'is_read' => true,
+                ]);
+
+                return response()->json([
+                    'status' => 'sent',
+                    'time' => $msg->created_at->format('g:i A'),
+                ]);
+            } catch (\Throwable $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+        })->name('messages.send');
+
         // DepEd Reports
         Route::get('/deped-reports', function () {
             return view('teacher.deped-reports');
@@ -228,6 +255,30 @@ Route::middleware(['auth', 'verified', 'role:student'])
         Route::get('/grades', function () {
             return view('student.grades');
         })->name('grades');
+
+        // Send message to teacher
+        Route::post('/messages/send', function (\Illuminate\Http\Request $request) {
+            try {
+                $request->validate([
+                    'teacher_id' => 'required',
+                    'message' => 'required|string|max:1000',
+                ]);
+
+                $studentRecord = \App\Models\Student::where('lrn', auth()->user()->lrn ?? '')->first();
+
+                \App\Models\TeacherMessage::create([
+                    'student_id' => $studentRecord?->id ?? auth()->id(),
+                    'student_user_id' => auth()->id(),
+                    'teacher_id' => $request->teacher_id,
+                    'sender' => 'student',
+                    'message' => $request->message,
+                ]);
+
+                return response()->json(['status' => 'sent']);
+            } catch (\Throwable $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+        })->name('messages.send');
 
         // Student Profile
         Route::get('/profile', [\App\Http\Controllers\Student\ProfileController::class, 'edit'])

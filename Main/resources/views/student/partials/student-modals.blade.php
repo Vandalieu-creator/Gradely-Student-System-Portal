@@ -1,3 +1,8 @@
+@php
+    $teacherDisplayName = $adviserName ?? 'Maria Santos';
+    $gradeDisplay = ($gradeLevel ?? 'Grade 1') . ' - ' . ($sectionName ?? 'Section A');
+@endphp
+
 <!-- Toast Notification: Message Sent -->
 <div x-show="showToast"
      x-transition:enter="transition ease-out duration-300 transform"
@@ -11,12 +16,12 @@
     <span class="text-2xl">📩</span>
     <div>
         <p class="text-sm font-bold">Message Sent!</p>
-        <p class="text-xs font-normal opacity-90">Mrs. Miller will reply to you soon.</p>
+        <p class="text-xs font-normal opacity-90">{{ $teacherDisplayName }} will reply to you soon.</p>
     </div>
 </div>
 
 <!-- ========================================== -->
-<!-- 1. ASK TEACHER CHAT MODAL (Mrs. Miller)   -->
+<!-- 1. ASK TEACHER CHAT MODAL                  -->
 <!-- ========================================== -->
 <div x-show="showTeacherModal" 
      x-transition.opacity 
@@ -34,20 +39,20 @@
 
         <!-- Teacher Avatar & Greeting Header -->
         <div class="flex items-start space-x-3 pt-2">
-            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" 
-                 alt="Mrs. Miller" 
+            <img src="https://ui-avatars.com/api/?name={{ urlencode($teacherDisplayName) }}&background=38BDF8&color=fff&bold=true" 
+                 alt="{{ $teacherDisplayName }}"
                  class="w-14 h-14 rounded-full border-2 border-kidBlue object-cover shadow-sm flex-shrink-0">
             
             <!-- Chat Bubble Popup -->
             <div class="bg-sky-100 border-2 border-sky-200 p-3.5 rounded-2xl rounded-tl-none text-darkText relative shadow-xs">
-                <p class="font-bold text-xs text-kidBlue mb-0.5">Mrs. Miller says:</p>
+                <p class="font-bold text-xs text-kidBlue mb-0.5">{{ $teacherDisplayName }} says:</p>
                 <p class="text-sm font-semibold leading-snug">Hi! 👋 How can I help you today?</p>
             </div>
         </div>
 
         <!-- Message Area -->
         <div class="space-y-2 pt-1">
-            <label for="teacher-msg" class="block text-xs font-bold text-gray-600">Type your message to Mrs. Miller:</label>
+            <label for="teacher-msg" class="block text-xs font-bold text-gray-600">Type your message to {{ $teacherDisplayName }}:</label>
             <textarea id="teacher-msg" 
                       x-model="teacherMessage" 
                       rows="3" 
@@ -114,7 +119,7 @@
             <button @click="
                         taskDone = true; 
                         stars += 20; 
-                        showModal = false;
+                        showModal = false; 
                     " 
                     class="bg-kidGreen hover:bg-green-500 text-white font-bold py-3 px-4 rounded-2xl shadow-md transition flex items-center justify-center space-x-1 cursor-pointer">
                 <i class="fa-solid fa-circle-check"></i>
@@ -154,7 +159,7 @@
             </div>
             <div>
                 <h3 class="text-xl font-bold text-slate-800">Class Schedule</h3>
-                <p class="text-xs text-sky-600 font-bold uppercase tracking-wider">Grade 4 - Diamond &bull; Mon - Fri</p>
+                <p class="text-xs text-sky-600 font-bold uppercase tracking-wider">{{ $gradeDisplay }} &bull; Mon - Fri</p>
             </div>
         </div>
 
@@ -162,30 +167,30 @@
             <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100">
                 <span class="font-bold text-slate-500">7:30 AM &ndash; 8:00 AM</span>
                 <span class="font-bold text-slate-800">Flag Ceremony & Homeroom</span>
-                <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-bold">General</span>
+                <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-bold">{{ $teacherDisplayName }}</span>
             </div>
             <div class="flex items-center justify-between p-3 rounded-2xl bg-amber-50/70 border border-amber-100">
                 <span class="font-bold text-amber-700">8:00 AM &ndash; 9:00 AM</span>
                 <span class="font-bold text-slate-800">Mathematics</span>
-                <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-bold">Mrs. Miller</span>
+                <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-bold">{{ $teacherDisplayName }}</span>
             </div>
             <div class="flex items-center justify-between p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100">
                 <span class="font-bold text-emerald-700">9:00 AM &ndash; 10:00 AM</span>
-                <span class="font-bold text-slate-800">Science</span>
-                <span class="text-[10px] bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Mr. Garcia</span>
+                <span class="font-bold text-slate-800">Mother Tongue</span>
+                <span class="text-[10px] bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded-full font-bold">{{ $teacherDisplayName }}</span>
             </div>
             <div class="flex items-center justify-between p-2.5 rounded-2xl bg-pink-100/60 border border-pink-200 text-pink-700 font-bold text-center justify-center">
                 <span>🍎 10:00 AM &ndash; 10:20 AM: Morning Recess & Snack</span>
             </div>
             <div class="flex items-center justify-between p-3 rounded-2xl bg-sky-50/70 border border-sky-100">
                 <span class="font-bold text-sky-700">10:20 AM &ndash; 11:20 AM</span>
-                <span class="font-bold text-slate-800">English & Reading</span>
-                <span class="text-[10px] bg-sky-200 text-sky-800 px-2 py-0.5 rounded-full font-bold">Ms. Lopez</span>
+                <span class="font-bold text-slate-800">Araling Panlipunan</span>
+                <span class="text-[10px] bg-sky-200 text-sky-800 px-2 py-0.5 rounded-full font-bold">{{ $teacherDisplayName }}</span>
             </div>
             <div class="flex items-center justify-between p-3 rounded-2xl bg-purple-50/70 border border-purple-100">
                 <span class="font-bold text-purple-700">11:20 AM &ndash; 12:00 PM</span>
                 <span class="font-bold text-slate-800">Filipino</span>
-                <span class="text-[10px] bg-purple-200 text-purple-800 px-2 py-0.5 rounded-full font-bold">Mrs. Santos</span>
+                <span class="text-[10px] bg-purple-200 text-purple-800 px-2 py-0.5 rounded-full font-bold">{{ $teacherDisplayName }}</span>
             </div>
             <div class="flex items-center justify-between p-2.5 rounded-2xl bg-yellow-100/60 border border-yellow-200 text-amber-800 font-bold text-center justify-center">
                 <span>🍱 12:00 PM &ndash; 1:00 PM: Lunch Break</span>
@@ -193,7 +198,7 @@
             <div class="flex items-center justify-between p-3 rounded-2xl bg-teal-50/70 border border-teal-100">
                 <span class="font-bold text-teal-700">1:00 PM &ndash; 2:00 PM</span>
                 <span class="font-bold text-slate-800">MAPEH / Art Class</span>
-                <span class="text-[10px] bg-teal-200 text-teal-800 px-2 py-0.5 rounded-full font-bold">Mr. Cruz</span>
+                <span class="text-[10px] bg-teal-200 text-teal-800 px-2 py-0.5 rounded-full font-bold">{{ $teacherDisplayName }}</span>
             </div>
             <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100">
                 <span class="font-bold text-slate-500">3:00 PM</span>
@@ -212,7 +217,7 @@
 </div>
 
 <!-- ========================================== -->
-<!-- 4. STUDENT GUIDE & FAQS MODAL             -->
+<!-- 4. STUDENT GUIDE & FAQS MODAL              -->
 <!-- ========================================== -->
 <div x-show="showHelpModal" 
      x-transition.opacity 
@@ -244,11 +249,11 @@
             </div>
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
                 <p class="font-bold text-slate-800 mb-1">📊 Where can I see my report card?</p>
-                <p class="text-slate-600">Click on "Grading" on the sidebar or click "View Report Card" on your dashboard to see your 1st, 2nd, 3rd, and 4th quarter grades.</p>
+                <p class="text-slate-600">Click on "Grading" on the sidebar or click "View Report Card" on your dashboard to see your 1st, 2nd, and 3rd quarter grades.</p>
             </div>
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
                 <p class="font-bold text-slate-800 mb-1">👩‍🏫 How do I ask my teacher for help?</p>
-                <p class="text-slate-600">Click the "Ask Help" button on Mrs. Miller's card or click "Support &rarr; Ask Mrs. Miller" in the sidebar anytime you have a question!</p>
+                <p class="text-slate-600">Click the "Ask Help" button on {{ $teacherDisplayName }}'s card or click "Support &rarr; Ask {{ $teacherDisplayName }}" in the sidebar anytime you have a question!</p>
             </div>
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
                 <p class="font-bold text-slate-800 mb-1">🔍 What is Quick Find (⌘K)?</p>

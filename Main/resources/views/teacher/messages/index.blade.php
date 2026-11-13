@@ -1,5 +1,75 @@
 <x-teacher-layout active="messages" title="Teacher Messages Inbox">
 
+    @php
+        $teacher = auth('teacher')->user();
+
+        // 1. Load all messages for this teacher
+        $allMessages = \App\Models\TeacherMessage::with('studentUser')
+            ->where('teacher_id', $teacher->id)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // 2. Load enrolled students in this teacher's classes
+        $classes = \App\Models\SchoolClass::with('students')
+            ->where('teacher_id', $teacher->id)
+            ->get();
+        $enrolledStudents = $classes->flatMap->students;
+
+        $threadsByUserId = [];
+
+        // First, add every student who already has messages with this teacher
+        foreach ($allMessages->groupBy('student_user_id') as $userId => $stuMsgs) {
+            $user = $stuMsgs->first()->studentUser;
+            if (!$user) continue;
+
+            $stuRecord = \App\Models\Student::with('schoolClass')
+                ->where('lrn', $user->lrn ?? '')
+                ->first();
+
+            $lastMsg = $stuMsgs->last();
+
+            $threadsByUserId[$user->id] = [
+                'id' => $user->id,
+                'name' => $stuRecord ? trim($stuRecord->first_name . ' ' . $stuRecord->last_name) : $user->name,
+                'role' => 'Student • ' . ($stuRecord?->schoolClass?->grade_level ?? 'Grade 1') . ' - ' . ($stuRecord?->schoolClass?->section ?? 'Section'),
+                'lrn' => $user->lrn ?? $stuRecord?->lrn ?? 'N/A',
+                'unread' => $stuMsgs->where('sender', 'student')->where('is_read', false)->count(),
+                'lastTime' => $lastMsg ? $lastMsg->created_at->format('g:i A') : 'New',
+                'messages' => $stuMsgs->map(fn($m) => [
+                    'sender' => $m->sender,
+                    'text' => $m->message,
+                    'time' => $m->created_at->format('M d, g:i A'),
+                ])->values()->all(),
+            ];
+        }
+
+        // Second, add any enrolled students in this teacher's class who haven't messaged yet
+        foreach ($enrolledStudents as $stu) {
+            $user = \App\Models\User::where('role', 'student')
+                ->where(function ($q) use ($stu) {
+                    if (!empty($stu->lrn)) {
+                        $q->where('lrn', trim($stu->lrn));
+                    }
+                    $q->orWhere('name', 'like', '%' . trim($stu->first_name) . '%');
+                })
+                ->first();
+
+            if (!$user || isset($threadsByUserId[$user->id])) continue;
+
+            $threadsByUserId[$user->id] = [
+                'id' => $user->id,
+                'name' => trim($stu->first_name . ' ' . $stu->last_name),
+                'role' => 'Student • ' . ($stu->schoolClass?->grade_level ?? 'Grade 1') . ' - ' . ($stu->schoolClass?->section ?? 'Section'),
+                'lrn' => $stu->lrn ?? $user->lrn ?? 'N/A',
+                'unread' => 0,
+                'lastTime' => 'New',
+                'messages' => [],
+            ];
+        }
+
+        $threadsData = array_values($threadsByUserId);
+    @endphp
+
     <!-- Top Navigation Header -->
     <header class="bg-white border-b border-slate-200/80 sticky top-0 z-20 px-6 py-4">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 max-w-7xl mx-auto">
@@ -21,89 +91,57 @@
                     </p>
                 </div>
             </div>
-
-            <!-- Compose Button -->
-            <button type="button" 
-                    @click="showMessageModal = true"
-                    class="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#00adef] hover:bg-[#009fdc] text-white text-xs font-bold shadow-md shadow-sky-500/20 transition cursor-pointer">
-                <i class="fa-solid fa-pen-to-square text-xs"></i>
-                <span>Compose Message</span>
-            </button>
         </div>
     </header>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8"
          x-data="{
              searchQuery: '',
-             activeThreadId: 1,
+             threads: @js($threadsData),
+             activeThreadId: {{ $threadsData[0]['id'] ?? 'null' }},
              replyText: '',
-             threads: [
-                 {
-                     id: 1,
-                     name: 'Jm Marvie Brizuela',
-                     role: 'Student • Grade 4 - Diamond',
-                     lrn: '109876543210',
-                     unread: 1,
-                     lastTime: '10:42 AM',
-                     messages: [
-                         { sender: 'student', text: 'Good morning teacher! 👋 I have a question about the animal drawing homework. Can we use watercolors instead of crayons?', time: '10:35 AM' },
-                         { sender: 'teacher', text: 'Good morning Jm! Yes, watercolors or crayons are both completely fine. Just make sure the drawing paper does not get too wet.', time: '10:38 AM' },
-                         { sender: 'student', text: 'Thank you teacher! I will finish it today and submit tomorrow morning. 😊', time: '10:42 AM' }
-                     ]
-                 },
-                 {
-                     id: 2,
-                     name: 'Mrs. Maria Licatan (Parent)',
-                     role: 'Parent of Eduard Licatan',
-                     lrn: '109876543211',
-                     unread: 1,
-                     lastTime: '8:15 AM',
-                     messages: [
-                         { sender: 'student', text: 'Good morning Mrs. Miller. Eduard has a mild fever today so I advised him to rest. May we request excuse for his attendance today?', time: '8:10 AM' },
-                         { sender: 'teacher', text: 'Good morning Mrs. Licatan. Noted on Eduard\'s medical absence. I have marked him excused. Please let him rest and take care!', time: '8:15 AM' }
-                     ]
-                 },
-                 {
-                     id: 3,
-                     name: 'Clint John Orbillo',
-                     role: 'Student • Grade 4 - Diamond',
-                     lrn: '109876543212',
-                     unread: 1,
-                     lastTime: 'Yesterday',
-                     messages: [
-                         { sender: 'student', text: 'Teacher, what page was our Math assignment in the textbook again?', time: 'Yesterday 4:10 PM' },
-                         { sender: 'teacher', text: 'Hello Clint! It is on pages 64-66, exercises A and B.', time: 'Yesterday 4:20 PM' }
-                     ]
-                 },
-                 {
-                     id: 4,
-                     name: 'Charles Cabrera',
-                     role: 'Student • Grade 4 - Diamond',
-                     lrn: '109876543213',
-                     unread: 0,
-                     lastTime: 'Nov 06',
-                     messages: [
-                         { sender: 'student', text: 'Teacher, thank you for checking my Science worksheet!', time: 'Nov 06' },
-                         { sender: 'teacher', text: 'You did a great job on ecosystems, Charles! Keep it up.', time: 'Nov 06' }
-                     ]
-                 }
-             ],
-             get activeThread() {
-                 return this.threads.find(t => t.id === this.activeThreadId) || this.threads[0];
+             get filteredThreads() {
+                 if (!this.searchQuery.trim()) return this.threads;
+                 const q = this.searchQuery.toLowerCase();
+                 return this.threads.filter(t => t.name.toLowerCase().includes(q) || t.lrn.toLowerCase().includes(q));
              },
-             sendMessage() {
-                 if (!this.replyText.trim()) return;
-                 this.activeThread.messages.push({
-                     sender: 'teacher',
-                     text: this.replyText,
-                     time: 'Just now'
-                 });
+             get activeThread() {
+                 return this.threads.find(t => t.id === this.activeThreadId) || this.threads[0] || null;
+             },
+             async sendMessage() {
+                 if (!this.replyText.trim() || !this.activeThread) return;
+                 const text = this.replyText;
                  this.replyText = '';
-                 notify('Message sent to ' + this.activeThread.name + '.', 'Sent');
-                 this.$nextTick(() => {
-                     const box = document.getElementById('chat-scroll-box');
-                     if (box) box.scrollTop = box.scrollHeight;
+
+                 const token = document.head.querySelector('meta[name=csrf-token]')?.content || '{{ csrf_token() }}';
+
+                 const res = await fetch('{{ route('teacher.messages.send') }}', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'Accept': 'application/json',
+                         'X-CSRF-TOKEN': token
+                     },
+                     body: JSON.stringify({
+                         student_user_id: this.activeThread.id,
+                         message: text
+                     })
                  });
+
+                 if (res.ok) {
+                     const data = await res.json();
+                     this.activeThread.messages.push({
+                         sender: 'teacher',
+                         text: text,
+                         time: data.time || 'Just now'
+                     });
+                     this.activeThread.lastTime = data.time || 'Just now';
+
+                     this.$nextTick(() => {
+                         const box = document.getElementById('chat-scroll-box');
+                         if (box) box.scrollTop = box.scrollHeight;
+                     });
+                 }
              }
          }">
 
@@ -119,14 +157,20 @@
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <input type="text" 
                                x-model="searchQuery" 
-                               placeholder="Search conversations..." 
+                               placeholder="Search student or LRN..." 
                                class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50">
                     </div>
                 </div>
 
                 <!-- Threads List -->
                 <div class="flex-1 overflow-y-auto divide-y divide-slate-100 custom-scrollbar">
-                    <template x-for="thread in threads" :key="thread.id">
+                    <template x-if="filteredThreads.length === 0">
+                        <div class="p-6 text-center text-xs text-slate-400">
+                            No student conversations found.
+                        </div>
+                    </template>
+
+                    <template x-for="thread in filteredThreads" :key="thread.id">
                         <div @click="activeThreadId = thread.id; thread.unread = 0"
                              :class="activeThreadId === thread.id ? 'bg-sky-50/80 border-l-4 border-sky-500' : 'hover:bg-slate-100/70 border-l-4 border-transparent'"
                              class="p-4 transition cursor-pointer flex items-start space-x-3">
@@ -144,7 +188,8 @@
                                     <span class="text-[10px] text-slate-400 font-mono" x-text="thread.lastTime"></span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 truncate" x-text="thread.role"></p>
-                                <p class="text-xs text-slate-600 truncate mt-1 font-medium" x-text="thread.messages[thread.messages.length - 1].text"></p>
+                                <p class="text-xs text-slate-600 truncate mt-1 font-medium"
+                                   x-text="thread.messages.length ? thread.messages[thread.messages.length - 1].text : 'No messages yet'"></p>
                             </div>
 
                             <span x-show="thread.unread > 0" class="w-5 h-5 rounded-full bg-sky-500 text-white font-bold text-[10px] flex items-center justify-center shrink-0" x-text="thread.unread"></span>
@@ -157,31 +202,39 @@
             <!-- Right Pane: Active Chat Conversation -->
             <div class="flex-1 flex flex-col bg-white">
                 
+                <!-- Empty state when no students exist -->
+                <template x-if="!activeThread">
+                    <div class="h-full flex flex-col items-center justify-center text-center text-slate-400 p-6">
+                        <i class="fa-regular fa-comments text-4xl mb-3 text-slate-300"></i>
+                        <h3 class="text-sm font-bold text-slate-700">No Conversations Yet</h3>
+                        <p class="text-xs mt-1 max-w-xs">Messages from your students will appear here once they reach out.</p>
+                    </div>
+                </template>
+
                 <!-- Chat Header -->
-                <div class="p-4 border-b border-slate-200/80 flex items-center justify-between bg-white">
+                <div x-show="activeThread" class="p-4 border-b border-slate-200/80 flex items-center justify-between bg-white">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-400 to-indigo-600 text-white font-bold text-xs flex items-center justify-center">
-                            <span x-text="activeThread.name.charAt(0)"></span>
+                            <span x-text="activeThread ? activeThread.name.charAt(0) : ''"></span>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-slate-900" x-text="activeThread.name"></h3>
-                            <p class="text-xs text-slate-500" x-text="activeThread.role + ' • LRN: ' + activeThread.lrn"></p>
+                            <h3 class="text-sm font-bold text-slate-900" x-text="activeThread ? activeThread.name : ''"></h3>
+                            <p class="text-xs text-slate-500" x-text="activeThread ? (activeThread.role + ' • LRN: ' + activeThread.lrn) : ''"></p>
                         </div>
-                    </div>
-
-                    <div class="flex items-center space-x-2">
-                        <button type="button" 
-                                @click="notify('Opening full academic profile for ' + activeThread.name, 'Profile Link')"
-                                class="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition cursor-pointer text-xs"
-                                title="View Student Records">
-                            <i class="fa-solid fa-address-card"></i>
-                        </button>
                     </div>
                 </div>
 
                 <!-- Chat History Messages Scroll Box -->
-                <div id="chat-scroll-box" class="flex-1 p-6 overflow-y-auto space-y-4 custom-scrollbar bg-slate-50/30">
-                    <template x-for="(msg, idx) in activeThread.messages" :key="idx">
+                <div x-show="activeThread" id="chat-scroll-box" class="flex-1 p-6 overflow-y-auto space-y-4 custom-scrollbar bg-slate-50/30">
+                    <template x-if="activeThread && activeThread.messages.length === 0">
+                        <div class="h-full flex flex-col items-center justify-center text-center text-slate-400 text-xs">
+                            <i class="fa-regular fa-comments text-3xl mb-2 text-slate-300"></i>
+                            <p class="font-semibold text-slate-600">No messages yet</p>
+                            <p class="mt-1">Send a message below or wait for your student to ask for help.</p>
+                        </div>
+                    </template>
+
+                    <template x-for="(msg, idx) in (activeThread ? activeThread.messages : [])" :key="idx">
                         <div class="flex" :class="msg.sender === 'teacher' ? 'justify-end' : 'justify-start'">
                             <div class="max-w-md rounded-2xl p-4 text-xs font-medium space-y-1 shadow-2xs"
                                  :class="msg.sender === 'teacher' ? 'bg-[#172554] text-white rounded-br-none' : 'bg-white text-slate-800 border border-slate-200/80 rounded-bl-none'">
@@ -196,7 +249,7 @@
                 </div>
 
                 <!-- Chat Input Footer -->
-                <div class="p-4 border-t border-slate-200/80 bg-white space-y-2">
+                <div x-show="activeThread" class="p-4 border-t border-slate-200/80 bg-white space-y-2">
                     <!-- Quick Reply Chips -->
                     <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-[11px]">
                         <button type="button" 
@@ -220,7 +273,7 @@
                     <form @submit.prevent="sendMessage()" class="flex items-center space-x-2">
                         <input type="text" 
                                x-model="replyText" 
-                               placeholder="Type your message to student or parent..." 
+                               placeholder="Type your message to student..." 
                                class="flex-1 px-4 py-3 rounded-2xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50 focus:bg-white transition">
                         
                         <button type="submit" 
@@ -240,4 +293,3 @@
     </div>
 
 </x-teacher-layout>
-

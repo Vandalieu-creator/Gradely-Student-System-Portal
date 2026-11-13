@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Ginatilan Elementary School - Student Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -44,6 +45,36 @@
         }
     </style>
 </head>
+@php
+    $user = Auth::user();
+
+    $studentRecord = \App\Models\Student::with(['schoolClass.teacher'])
+        ->when($user?->lrn, function ($q) use ($user) {
+            $q->where('lrn', $user->lrn);
+        }, function ($q) use ($user) {
+            $q->whereRaw("CONCAT(first_name, ' ', IFNULL(CONCAT(middle_name, ' '), ''), last_name) = ?", [$user?->name])
+              ->orWhereRaw("CONCAT(first_name, ' ', last_name) = ?", [$user?->name]);
+        })
+        ->first();
+
+    $schoolClass = $studentRecord?->schoolClass;
+    $gradeLevel  = $schoolClass?->grade_level ?: 'Grade 1';
+
+    $rawSection = trim((string) ($schoolClass?->section ?? ''));
+    if ($rawSection !== '' && strcasecmp($rawSection, 'section') !== 0) {
+        $sectionName = $rawSection;
+    } elseif (!empty($schoolClass?->class_name)) {
+        $parts = explode('-', $schoolClass->class_name, 2);
+        $sectionName = trim($parts[1] ?? $schoolClass->class_name);
+    } else {
+        $sectionName = 'Unassigned';
+    }
+
+    $adviser = $schoolClass?->teacher;
+    $adviserName = $adviser
+        ? trim($adviser->first_name . ' ' . $adviser->last_name)
+        : 'Unassigned Teacher';
+@endphp
 <body class="bg-skyBg min-h-screen text-darkText font-sans antialiased overflow-x-hidden"
       x-data="{ 
           showModal: false, 
@@ -52,6 +83,7 @@
           showHelpModal: false,
           showToast: false,
           teacherMessage: '',
+          sendingMessage: false,
           taskDone: false, 
           stars: 125,
           sidebarCollapsed: localStorage.getItem('gradely_student_sidebar_collapsed') === 'true',
@@ -62,17 +94,45 @@
               this.sidebarCollapsed = !this.sidebarCollapsed;
               localStorage.setItem('gradely_student_sidebar_collapsed', this.sidebarCollapsed);
           },
-          sendTeacherMessage() {
-              if (this.teacherMessage.trim() === '') return;
-              this.showTeacherModal = false;
-              this.teacherMessage = '';
-              this.showToast = true;
-              setTimeout(() => { this.showToast = false; }, 3500);
+          async sendTeacherMessage() {
+              if (this.teacherMessage.trim() === '' || this.sendingMessage) return;
+              this.sendingMessage = true;
+
+              try {
+                  const token = document.head.querySelector('meta[name=csrf-token]').content;
+                  const res = await fetch('{{ route('student.messages.send') }}', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json',
+                          'X-CSRF-TOKEN': token
+                      },
+                      body: JSON.stringify({
+                          teacher_id: {{ $adviser?->id ?? 'null' }},
+                          message: this.teacherMessage
+                      })
+                  });
+
+                  if (res.ok) {
+                      this.showTeacherModal = false;
+                      this.teacherMessage = '';
+                      this.showToast = true;
+                      setTimeout(() => { this.showToast = false; }, 3500);
+                  } else {
+                      alert('Error sending message: ' + res.status);
+                  }
+              } finally {
+                  this.sendingMessage = false;
+              }
           }
       }">
 
     <!-- Global Modals (Teacher Chat, Homework, Schedule, Guide, Toast) -->
-    @include('student.partials.student-modals')
+    @include('student.partials.student-modals', [
+        'adviserName' => $adviserName,
+        'gradeLevel' => $gradeLevel,
+        'sectionName' => $sectionName,
+    ])
 
     <!-- Quick Find Global Modal (Ctrl+K / Cmd+K) -->
     @include('student.partials.quick-find')
@@ -177,20 +237,27 @@
                         
                         <div class="flex items-center space-x-4 z-10">
                             <!-- School Logo & Student Avatar -->
-                            <div class="relative flex items-center -space-x-3">
-                                <img src="https://scontent.fcgy1-3.fna.fbcdn.net/v/t39.30808-6/306785656_399144949050859_6940190266702559829_n.jpg?stp=dst-jpg_tt6&cstp=mx828x826&ctp=s828x826&_nc_cat=107&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeF9qZjwNm8ws90wGeOqub0Eo6zNz6rPh_OjrM3Pqs-H8wS5n8vDVhoVtTSS4_xuRAJgS26g3wgxBi6xKpoNHqQ5&_nc_ohc=FW-j_FEzrbcQ7kNvwEwT63b&_nc_oc=AdrKR7rNle1H8gKGVImclHZmMCgu58CsqQTjszwsTg1EfbYrGyXL7wR3C1jQ81nAnu0&_nc_zt=23&_nc_ht=scontent.fcgy1-3.fna&_nc_gid=sIjMlVk-b2AmePncb3Dw0A&_nc_ss=7b2a8&oh=00_AQMDhpAOFSUOYgN6PLYNdW2XC2g2FOQwICPTaKPcFaF_LQ&oe=6AD7D0A2" alt="Ginatilan Elementary School Logo" class="w-20 h-20 rounded-full border-4 border-white shadow-md object-cover bg-white z-10">
+                            <div class="relative flex items-center -space-x-3 shrink-0">
+                                <img src="{{ asset('images/school-logo2.png') }}" alt="Ginatilan Elementary School Logo" class="w-20 h-20 rounded-full border-4 border-white shadow-md object-cover bg-white z-10">
                                 <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Student Avatar" class="w-16 h-16 rounded-full border-4 border-white shadow-md object-cover">
                             </div>
 
                             <div>
-                                <!-- School Name Badge -->
-                                <div class="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30 text-xs font-bold uppercase tracking-wider mb-1">
-                                    <i class="fa-solid fa-school text-kidYellow"></i>
-                                    <span>Ginatilan Elementary School</span>
+                                <!-- School Name & Grade/Section Badges -->
+                                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                    <div class="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30 text-xs font-bold uppercase tracking-wider">
+                                        <i class="fa-solid fa-school text-kidYellow"></i>
+                                        <span>Ginatilan Elementary School</span>
+                                    </div>
+
+                                    <div class="inline-flex items-center space-x-1.5 bg-kidYellow text-darkText px-3 py-1 rounded-full shadow-xs text-xs font-bold uppercase tracking-wider">
+                                        <i class="fa-solid fa-chalkboard-user"></i>
+                                        <span>{{ $gradeLevel }} &bull; {{ $sectionName }}</span>
+                                    </div>
                                 </div>
                                 
                                 <h1 class="text-3xl sm:text-4xl font-bold">Hi, {{ Auth::user()->name ?? 'Super Star' }}! 👋</h1>
-                                <p class="text-white/90 text-sm sm:text-base">Ready for another fun learning day?</p>
+                                <p class="text-white/80 text-sm sm:text-base">Ready for another fun learning day?</p>
                             </div>
                         </div>
 
@@ -361,7 +428,7 @@
                                         <span class="bg-teal-600 text-white font-bold text-[10px] px-2.5 py-0.5 rounded-full uppercase">Report Card</span>
                                     </div>
                                     <p class="text-xs text-slate-600 mb-4">
-                                        Check your quarterly grades and academic standing from 1st to 4th Quarter.
+                                        Check your quarterly grades and academic standing from 1st to 3rd Quarter.
                                     </p>
                                 </div>
 
@@ -379,17 +446,25 @@
                                 </h3>
                                 <div class="bg-white p-3 rounded-2xl shadow-xs flex items-center justify-between border border-sky-100">
                                     <div class="flex items-center space-x-3">
-                                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" class="w-10 h-10 rounded-full object-cover border-2 border-kidBlue">
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($adviserName) }}&background=38BDF8&color=fff&bold=true" 
+                                             alt="{{ $adviserName }}"
+                                             class="w-10 h-10 rounded-full object-cover border-2 border-kidBlue">
                                         <div>
-                                            <h4 class="font-bold text-xs text-darkText">Mrs. Miller</h4>
-                                            <p class="text-[10px] text-gray-500">Homeroom Teacher</p>
+                                            <h4 class="font-bold text-xs text-darkText">{{ $adviserName }}</h4>
+                                            <p class="text-[10px] text-gray-500">Homeroom Teacher ({{ $gradeLevel }} &bull; {{ $sectionName }})</p>
                                         </div>
                                     </div>
                                     <!-- Ask Help Button triggers Teacher Modal -->
-                                    <button @click="showTeacherModal = true" 
-                                            class="bg-kidBlue text-white font-bold text-xs px-3 py-1.5 rounded-xl hover:bg-sky-500 transition cursor-pointer shadow-sm">
-                                        Ask Help
-                                    </button>
+                                    @if($adviser)
+                                        <button @click="showTeacherModal = true" 
+                                                class="bg-kidBlue text-white font-bold text-xs px-3 py-1.5 rounded-xl hover:bg-sky-500 transition cursor-pointer shadow-sm">
+                                            Ask Help
+                                        </button>
+                                    @else
+                                        <span class="bg-slate-100 text-slate-400 font-bold text-[10px] px-2.5 py-1 rounded-xl">
+                                            Pending
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
 

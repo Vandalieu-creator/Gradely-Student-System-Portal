@@ -1,21 +1,21 @@
 @props(['active' => 'dashboard'])
 
 <!-- Student Navigation Sidebar Component -->
-<aside class="relative flex flex-col justify-between shrink-0 transition-all duration-300 ease-in-out z-40 select-none overflow-hidden"
+<aside class="relative flex flex-col justify-between shrink-0 transition-all duration-300 ease-in-out z-40 select-none h-screen max-h-screen overflow-hidden"
        :class="sidebarCollapsed ? 'w-[74px]' : 'w-64'"
-       style="background: linear-gradient(180deg, #101a2a 0%, #142236 38%, #1a2b44 72%, #3c516f 90%, #a2b5cc 100%); min-height: 100vh;">
+       style="background: linear-gradient(180deg, #101a2a 0%, #142236 38%, #1a2b44 72%, #3c516f 90%, #a2b5cc 100%);">
 
-    <!-- Bottom Misty Gradient Overlay (matching the picture) -->
+    <!-- Bottom Misty Gradient Overlay -->
     <div class="pointer-events-none absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-slate-200/55 via-slate-300/15 to-transparent z-10"></div>
 
-    <div class="relative z-20 flex flex-col h-full p-3 sm:p-3.5">
+    <div class="relative z-20 flex flex-col h-full min-h-0 p-3 sm:p-3.5">
 
         <!-- ============================================================== -->
         <!-- TOP SECTION: Collapse Toggle & Cyan Apple Banner / Button     -->
         <!-- ============================================================== -->
 
         <!-- EXPANDED TOP BAR -->
-        <div x-show="!sidebarCollapsed" class="space-y-3 pb-3">
+        <div x-show="!sidebarCollapsed" class="shrink-0 space-y-3 pb-3">
             
             <!-- Top Right Collapse Button (<) -->
             <div class="flex justify-end pt-1 pr-1">
@@ -80,16 +80,12 @@
                     </div>
 
                     <div class="space-y-1">
-
-                        <!-- My Profile -->
                         <a href="{{ route('student.profile.edit') }}"
                            class="flex items-center justify-between p-2 rounded-xl hover:bg-white/10 transition text-slate-200">
-
                             <span class="flex items-center space-x-2">
                                 <i class="fa-solid fa-user-circle text-cyan-400 text-xs"></i>
                                 <span>My Profile</span>
                             </span>
-
                             <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
                         </a>
                         <a href="{{ route('student.dashboard') }}" class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white/10 transition text-slate-200">
@@ -118,7 +114,7 @@
         </div>
 
         <!-- COLLAPSED TOP BAR -->
-        <div x-show="sidebarCollapsed" class="flex flex-col items-center space-y-3 pb-3" style="display: none;">
+        <div x-show="sidebarCollapsed" class="shrink-0 flex flex-col items-center space-y-3 pb-3" style="display: none;">
             
             <!-- Apple Icon Squircle Button -->
             <button type="button" 
@@ -144,9 +140,9 @@
         </div>
 
         <!-- ============================================================== -->
-        <!-- NAVIGATION MENU ITEMS                                          -->
+        <!-- NAVIGATION MENU ITEMS (Scrollable Container)                   -->
         <!-- ============================================================== -->
-        <nav class="flex-1 space-y-1.5 overflow-y-auto overflow-x-hidden pr-0.5 custom-scrollbar">
+        <nav class="flex-1 min-h-0 space-y-1.5 overflow-y-auto overflow-x-hidden pr-1.5 pb-4 custom-scrollbar">
 
             <!-- 1. DASHBOARD -->
             <div class="relative group">
@@ -155,21 +151,16 @@
                    :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
                     
                     <div class="flex items-center space-x-3.5">
-                        <!-- House Icon -->
                         <svg class="w-5 h-5 shrink-0 {{ $active === 'dashboard' ? 'text-sky-400' : 'text-slate-300 group-hover:text-white' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 10.5L12 3l9 7.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10.5z"/>
                             <path d="M9 22V12h6v10"/>
                         </svg>
-
-                        <!-- Label -->
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap tracking-wide">Dashboard</span>
                     </div>
 
-                    <!-- Active Dot Indicator -->
                     <div x-show="!sidebarCollapsed && '{{ $active }}' === 'dashboard'" class="w-1.5 h-1.5 rounded-full bg-sky-400"></div>
                 </a>
 
-                <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
                      class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Dashboard</span>
@@ -185,21 +176,16 @@
                         :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
                     
                     <div class="flex items-center space-x-3.5">
-                        <!-- Magnifying Glass Icon -->
                         <svg class="w-5 h-5 shrink-0 text-slate-300 group-hover:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="7"/>
                             <path d="M21 21l-4.35-4.35"/>
                         </svg>
-
-                        <!-- Label -->
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap tracking-wide">Quick Find</span>
                     </div>
 
-                    <!-- Shortcut badge -->
                     <span x-show="!sidebarCollapsed" class="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-slate-400 font-mono">⌘K</span>
                 </button>
 
-                <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
                      class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Quick Find (⌘K)</span>
@@ -215,7 +201,6 @@
                         :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
                     
                     <div class="flex items-center space-x-3.5">
-                        <!-- School combo desk-chair outline icon -->
                         <svg class="w-5 h-5 shrink-0 text-slate-300 group-hover:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 6v8"/>
                             <path d="M4 12h5"/>
@@ -226,12 +211,9 @@
                             <path d="M19 9v11"/>
                             <path d="M6.5 17h10"/>
                         </svg>
-
-                        <!-- Label -->
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap tracking-wide">Classroom</span>
                     </div>
 
-                    <!-- Downward Small Caret (▼) -->
                     <svg x-show="!sidebarCollapsed" 
                          class="w-2.5 h-2.5 text-slate-400 group-hover:text-slate-200 transition-transform duration-200" 
                          :class="openMenu ? 'rotate-180 text-white' : ''" 
@@ -240,7 +222,6 @@
                     </svg>
                 </button>
 
-                <!-- Submenu when Expanded -->
                 <div x-show="!sidebarCollapsed && openMenu" 
                      x-transition:enter="transition ease-out duration-150"
                      x-transition:enter-start="opacity-0 -translate-y-1"
@@ -248,17 +229,16 @@
                      class="pl-11 pr-2 py-1 space-y-1 text-xs" 
                      style="display: none;">
                     <a href="{{ route('student.dashboard') }}#subjects" class="block py-1.5 text-slate-300 hover:text-white transition">
-                        🏫 Grade 4 - Diamond
+                        🏫 Grade 1 - Section A
                     </a>
                     <button type="button" @click="showScheduleModal = true" class="block py-1.5 text-indigo-300 hover:text-white transition text-left w-full cursor-pointer">
                         📅 Daily Schedule
                     </button>
                     <button type="button" @click="showTeacherModal = true" class="block py-1.5 text-slate-300 hover:text-white transition text-left w-full cursor-pointer">
-                        👩‍🏫 Mrs. Miller (Homeroom)
+                        👩‍🏫 Ask My Teacher
                     </button>
                 </div>
 
-                <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
                      class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Classroom</span>
@@ -274,7 +254,6 @@
                         :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
                     
                     <div class="flex items-center space-x-3.5">
-                        <!-- Desktop monitor with document icon -->
                         <svg class="w-5 h-5 shrink-0 text-slate-300 group-hover:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="3" width="20" height="13" rx="2"/>
                             <path d="M8 20h8"/>
@@ -283,12 +262,9 @@
                             <path d="M9.5 8.5h5"/>
                             <path d="M9.5 10.5h3.5"/>
                         </svg>
-
-                        <!-- Label -->
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap tracking-wide">Assignments</span>
                     </div>
 
-                    <!-- Downward Small Caret (▼) -->
                     <svg x-show="!sidebarCollapsed" 
                          class="w-2.5 h-2.5 text-slate-400 group-hover:text-slate-200 transition-transform duration-200" 
                          :class="openMenu ? 'rotate-180 text-white' : ''" 
@@ -297,7 +273,6 @@
                     </svg>
                 </button>
 
-                <!-- Submenu when Expanded -->
                 <div x-show="!sidebarCollapsed && openMenu" 
                      x-transition:enter="transition ease-out duration-150"
                      x-transition:enter-start="opacity-0 -translate-y-1"
@@ -315,7 +290,6 @@
                     </a>
                 </div>
 
-                <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
                      class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Assignments</span>
@@ -323,7 +297,7 @@
                 </div>
             </div>
 
-            <!-- 5. GRADING (Accordion / Direct Link) -->
+            <!-- 5. GRADING (Accordion) -->
             <div class="relative group" x-data="{ openMenu: false }">
                 <button type="button" 
                         @click="if (sidebarCollapsed) { sidebarCollapsed = false; openMenu = true; } else { openMenu = !openMenu; }"
@@ -331,7 +305,6 @@
                         :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
                     
                     <div class="flex items-center space-x-3.5">
-                        <!-- Circle checkmark & badge icon -->
                         <svg class="w-5 h-5 shrink-0 {{ $active === 'grades' ? 'text-teal-400' : 'text-slate-300 group-hover:text-white' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="13" cy="13" r="7.5"/>
                             <path d="m10 13 2 2 4-4"/>
@@ -339,12 +312,9 @@
                             <path d="m4.8 6h2.4"/>
                             <path d="m6 4.8v2.4"/>
                         </svg>
-
-                        <!-- Label -->
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap tracking-wide">Grading</span>
                     </div>
 
-                    <!-- Downward Small Caret (▼) -->
                     <svg x-show="!sidebarCollapsed" 
                          class="w-2.5 h-2.5 text-slate-400 group-hover:text-slate-200 transition-transform duration-200" 
                          :class="openMenu ? 'rotate-180 text-white' : ''" 
@@ -353,7 +323,6 @@
                     </svg>
                 </button>
 
-                <!-- Submenu when Expanded -->
                 <div x-show="!sidebarCollapsed && openMenu" 
                      x-transition:enter="transition ease-out duration-150"
                      x-transition:enter-start="opacity-0 -translate-y-1"
@@ -372,12 +341,8 @@
                     <a href="{{ route('student.grades') }}?quarter=q3" class="block py-1.5 text-slate-300 hover:text-white transition">
                         🥉 3rd Quarter
                     </a>
-                    <a href="{{ route('student.grades') }}?quarter=q4" class="block py-1.5 text-slate-300 hover:text-white transition">
-                        🏆 4th Quarter
-                    </a>
                 </div>
 
-                <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
                      class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Grading</span>
@@ -393,7 +358,6 @@
                         :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
                     
                     <div class="flex items-center space-x-3.5">
-                        <!-- Open book icon -->
                         <svg class="w-5 h-5 shrink-0 text-slate-300 group-hover:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 19.5v-13A2.5 2.5 0 0 1 6.5 4H12v15H6.5A2.5 2.5 0 0 0 4 19.5z"/>
                             <path d="M20 19.5v-13A2.5 2.5 0 0 0 17.5 4H12v15h5.5a2.5 2.5 0 0 1 2.5 2.5z"/>
@@ -402,12 +366,9 @@
                             <path d="M14 8h3.5"/>
                             <path d="M14 11h3.5"/>
                         </svg>
-
-                        <!-- Label -->
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap tracking-wide">Curriculum</span>
                     </div>
 
-                    <!-- Downward Small Caret (▼) -->
                     <svg x-show="!sidebarCollapsed" 
                          class="w-2.5 h-2.5 text-slate-400 group-hover:text-slate-200 transition-transform duration-200" 
                          :class="openMenu ? 'rotate-180 text-white' : ''" 
@@ -416,7 +377,6 @@
                     </svg>
                 </button>
 
-                <!-- Submenu when Expanded -->
                 <div x-show="!sidebarCollapsed && openMenu" 
                      x-transition:enter="transition ease-out duration-150"
                      x-transition:enter-start="opacity-0 -translate-y-1"
@@ -437,7 +397,6 @@
                     </a>
                 </div>
 
-                <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
                      class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Curriculum</span>
@@ -453,19 +412,15 @@
                         :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-between px-3 py-2.5'">
                     
                     <div class="flex items-center space-x-3.5">
-                        <!-- Chat bubble with three dots icon -->
                         <svg class="w-5 h-5 shrink-0 text-slate-300 group-hover:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                             <circle cx="8" cy="12" r="1" fill="currentColor"/>
                             <circle cx="12" cy="12" r="1" fill="currentColor"/>
                             <circle cx="16" cy="12" r="1" fill="currentColor"/>
                         </svg>
-
-                        <!-- Label -->
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap tracking-wide">Support</span>
                     </div>
 
-                    <!-- Downward Small Caret (▼) -->
                     <svg x-show="!sidebarCollapsed" 
                          class="w-2.5 h-2.5 text-slate-400 group-hover:text-slate-200 transition-transform duration-200" 
                          :class="openMenu ? 'rotate-180 text-white' : ''" 
@@ -474,25 +429,20 @@
                     </svg>
                 </button>
 
-                <!-- Submenu when Expanded -->
                 <div x-show="!sidebarCollapsed && openMenu" 
                      x-transition:enter="transition ease-out duration-150"
                      x-transition:enter-start="opacity-0 -translate-y-1"
                      x-transition:enter-end="opacity-100 translate-y-0"
                      class="pl-11 pr-2 py-1 space-y-1 text-xs" 
                      style="display: none;">
-                    <button type="button" @click="showTeacherModal = true" class="block py-1.5 text-sky-300 hover:text-white font-medium transition text-left w-full cursor-pointer">
-                        💬 Ask Mrs. Miller
-                    </button>
-                    <button type="button" @click="showHelpModal = true" class="block py-1.5 text-purple-300 hover:text-white transition text-left w-full cursor-pointer">
-                        🌟 Student FAQs & Help
+                    <button type="button" @click="showTeacherModal = true" class="block py-1.5 text-sky-300 hover:text-white transition text-left w-full cursor-pointer">
+                        💬 Ask My Teacher
                     </button>
                     <button type="button" @click="showHelpModal = true" class="block py-1.5 text-slate-300 hover:text-white transition text-left w-full cursor-pointer">
-                        🏫 School Guidelines
+                        ❓ Student Guide
                     </button>
                 </div>
 
-                <!-- Tooltip when Collapsed -->
                 <div x-show="sidebarCollapsed" 
                      class="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 absolute left-full top-1/2 -translate-y-1/2 ml-3 bg-[#0d1624] text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap z-50 flex items-center">
                     <span>Support</span>
@@ -503,29 +453,42 @@
         </nav>
 
         <!-- ============================================================== -->
-        <!-- BOTTOM LOGOUT & SCHOOL BRAND                                   -->
+        <!-- BOTTOM FOOTER: Pinned Profile & Logout                         -->
         <!-- ============================================================== -->
-        <div class="pt-3 border-t border-white/10 mt-2">
-            
+        <div class="shrink-0 pt-2 border-t border-white/15">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" 
-                        class="w-full flex items-center rounded-xl p-2.5 text-slate-300 hover:text-red-300 hover:bg-red-500/10 transition duration-150 cursor-pointer text-xs font-semibold"
-                        :class="sidebarCollapsed ? 'justify-center' : 'justify-between'">
-                    
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid fa-right-from-bracket text-sm shrink-0"></i>
-                        <span x-show="!sidebarCollapsed" class="tracking-wide">Log Out</span>
-                    </div>
-
-                    <span x-show="!sidebarCollapsed" class="text-[10px] opacity-70">Exit</span>
+                <button type="submit"
+                        title="Log Out"
+                        class="w-full flex items-center rounded-xl transition duration-200 font-bold text-xs text-slate-900 bg-white/80 hover:bg-white shadow-sm cursor-pointer"
+                        :class="sidebarCollapsed ? 'justify-center p-3' : 'justify-center space-x-2 px-3 py-2.5'">
+                    <i class="fa-solid fa-right-from-bracket text-red-600"></i>
+                    <span x-show="!sidebarCollapsed">Log Out</span>
                 </button>
             </form>
-
-            <div x-show="!sidebarCollapsed" class="mt-2 text-center text-[10px] text-slate-400 font-medium">
-                Gradely Student Portal
-            </div>
         </div>
 
     </div>
 </aside>
+
+<style>
+    /* Custom Sidebar Scrollbar */
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.25);
+        border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
+        border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(56, 189, 248, 0.75);
+    }
+</style>
